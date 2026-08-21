@@ -1,0 +1,80 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>ffedd79a-c195-48ee-89ea-5c6dbbb86771</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>backend\run.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Mail Automation System</Name>
+    <RootNamespace>Mail Automation System</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="backend\" />
+    <Folder Include="backend\app\" />
+    <Folder Include="backend\app\models\" />
+    <Folder Include="backend\app\scheduler\" />
+    <Folder Include="backend\app\workers\" />
+    <Folder Include="backend\app\utils\" />
+    <Folder Include="backend\app\validators\" />
+    <Folder Include="backend\app\services\" />
+    <Folder Include="backend\app\routes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="backend\app\models\email_job.py" />
+    <Compile Include="backend\app\models\email_log.py" />
+    <Compile Include="backend\app\models\email_template.py" />
+    <Compile Include="backend\app\models\employee.py" />
+    <Compile Include="backend\app\models\__init__.py" />
+    <Compile Include="backend\app\routes\dashboard_routes.py" />
+    <Compile Include="backend\app\routes\email_log_routes.py" />
+    <Compile Include="backend\app\routes\email_routes.py" />
+    <Compile Include="backend\app\routes\email_template_routes.py" />
+    <Compile Include="backend\app\routes\employee_routes.py" />
+    <Compile Include="backend\app\routes\upload_routes.py" />
+    <Compile Include="backend\app\routes\__init__.py" />
+    <Compile Include="backend\app\scheduler\birthday_scheduler.py" />
+    <Compile Include="backend\app\scheduler\__init__.py" />
+    <Compile Include="backend\app\services\birthday_service.py" />
+    <Compile Include="backend\app\services\dashboard_service.py" />
+    <Compile Include="backend\app\services\email_log_service.py" />
+    <Compile Include="backend\app\services\email_service.py" />
+    <Compile Include="backend\app\services\email_template_service.py" />
+    <Compile Include="backend\app\services\employee_service.py" />
+    <Compile Include="backend\app\services\upload_service.py" />
+    <Compile Include="backend\app\services\__init__.py" />
+    <Compile Include="backend\app\utils\excel_reader.py" />
+    <Compile Include="backend\app\validators\employee_validator.py" />
+    <Compile Include="backend\app\workers\email_worker.py" />
+    <Compile Include="backend\app\workers\__init__.py" />
+    <Compile Include="backend\run.py" />
+    <Compile Include="backend\app\__init__.py" />
+    <Compile Include="backend\app\config.py" />
+    <Compile Include="backend\app\database.py" />
+    <Compile Include="backend\test_birthday_scheduler.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="backend\.env" />
+    <Content Include="backend\requirements.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

@@ -1,0 +1,10 @@
+Flask
+Flask-Cors
+python-dotenv
+SQLAlchemy
+Flask-SQLAlchemy
+psycopg2-binary
+Flask-Migrate
+APScheduler
+pandas
+openpyxl
