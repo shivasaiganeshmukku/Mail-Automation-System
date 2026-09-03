@@ -7,16 +7,18 @@ import Employees from "./pages/Employees/Employees";
 import EmailTemplates from "./pages/EmailTemplates/EmailTemplates";
 import SendEmail from "./pages/SendEmail/SendEmail";
 import EmailLogs from "./pages/EmailLogs/EmailLogs";
+import Settings from "./pages/Settings/Settings";
 
 
 
-function App() {
+function App({ darkMode, toggleDarkMode }) {
     return (
         <BrowserRouter>
 
             <Routes>
 
-                <Route path="/" element={<MainLayout />}>
+                <Route path="/" element={<MainLayout   darkMode={darkMode}
+            toggleDarkMode={toggleDarkMode} />}>
 
                     <Route
                         index
@@ -41,6 +43,10 @@ function App() {
                     <Route
                         path="email-logs"
                         element={<EmailLogs />}
+                    />
+                    <Route
+                        path="/settings"
+                        element={<Settings />}
                     />
 
                 </Route>

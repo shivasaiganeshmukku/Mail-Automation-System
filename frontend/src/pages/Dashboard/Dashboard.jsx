@@ -206,6 +206,11 @@ function Dashboard() {
 
                 <TableContainer
                     component={Paper}
+                    sx={{
+                        borderRadius: "12px",
+                        overflow: "hidden",
+                        backgroundColor: "#e8e3df"
+                    }}
                 >
 
                     <Table>

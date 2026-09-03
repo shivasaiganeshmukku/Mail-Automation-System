@@ -1,37 +1,78 @@
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-
 import { Outlet } from "react-router-dom";
 
 import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
 
-function MainLayout() {
+
+function MainLayout({ darkMode, toggleDarkMode }) {
 
     return (
-        <>
-            <Navbar />
 
-            <Box sx={{ display: "flex" }}>
+        <Box
+            sx={{
+                minHeight: "100vh",
 
-                <Sidebar />
+                backgroundColor:
+                    "background.default",
 
-                <Box
-                    component="main"
-                    sx={{
-                        flexGrow: 1,
-                        p: 3
-                    }}
-                >
-                    <Toolbar />
+                color:
+                    "text.primary",
 
-                    <Outlet />
+                transition:
+                    "background-color 0.25s ease, color 0.25s ease",
+            }}
+        >
 
-                </Box>
+            {/* =========================================
+                NAVBAR
+            ========================================= */}
+
+            <Navbar darkMode={darkMode}
+    toggleDarkMode={toggleDarkMode}/>
+
+
+            {/* =========================================
+                PAGE CONTENT
+            ========================================= */}
+
+            <Box
+                component="main"
+                sx={{
+
+                    minHeight: "100vh",
+
+                    pt: {
+                        xs: 10,
+                        sm: 11
+                    },
+
+                    px: {
+                        xs: 2,
+                        sm: 3,
+                        md: 4
+                    },
+
+                    pb: 4,
+
+                    overflowX: "hidden",
+
+                    backgroundColor:
+                        "background.default",
+
+                    transition:
+                        "background-color 0.25s ease",
+                }}
+            >
+
+                <Outlet />
 
             </Box>
-        </>
+
+        </Box>
+
     );
+
 }
+
 
 export default MainLayout;

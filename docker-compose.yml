@@ -1,0 +1,63 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: mail-postgres
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: MAS
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d MAS"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: mail-backend
+
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: MAS
+      DB_USER: postgres
+      DB_PASSWORD: password
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+
+      
+
+      container_name: mail-frontend
+
+      
+      ports:
+        - "5173:80"
+
+      depends_on:
+        - backend
+
+volumes:
+  postgres_data:

@@ -8,3 +8,4 @@ Flask-Migrate
 APScheduler
 pandas
 openpyxl
+gunicorn

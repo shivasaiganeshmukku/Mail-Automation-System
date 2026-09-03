@@ -22,6 +22,10 @@ import Alert from "@mui/material/Alert";
 
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ClearIcon from "@mui/icons-material/Clear";
+import EmailIcon from "@mui/icons-material/Email";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+
 
 import EmailLogService from "../../services/emailLogService";
 
@@ -115,10 +119,6 @@ function EmailLogs() {
             search.trim().toLowerCase();
 
 
-        /*
-        Search all important fields
-        */
-
         const searchableText = [
 
             log.id,
@@ -153,19 +153,11 @@ function EmailLogs() {
             searchableText.includes(searchText);
 
 
-        /*
-        Status filter
-        */
-
         const matchesStatus =
             statusFilter === "ALL" ||
             String(log.status ?? "").toUpperCase() ===
                 statusFilter;
 
-
-        /*
-        Date filter
-        */
 
         let matchesDate = true;
 
@@ -309,22 +301,118 @@ function EmailLogs() {
     };
 
 
+    /*
+    ============================================================
+    STATUS STYLE
+    ============================================================
+    */
+
+    const getStatusStyle = (status) => {
+
+        const normalizedStatus =
+            String(status ?? "").toUpperCase();
+
+
+        if (normalizedStatus === "SUCCESS") {
+
+            return {
+                color: "#047857",
+                background: "#D1FAE5",
+                border: "#6EE7B7",
+            };
+
+        }
+
+
+        return {
+            color: "#B91C1C",
+            background: "#FEE2E2",
+            border: "#FCA5A5",
+        };
+
+    };
+
+
     return (
 
-        <>
+        <Box
+            sx={{
+                width: "100%",
+                minHeight: "calc(100vh - 120px)",
+            }}
+        >
 
             {/* ================================================= */}
-            {/* PAGE TITLE */}
+            {/* PAGE HEADER */}
             {/* ================================================= */}
 
-            <Typography
-                variant="h4"
+            <Box
                 sx={{
-                    mb: 3
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 3,
                 }}
             >
-                Email Logs
-            </Typography>
+
+                <Box
+                    sx={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: "12px",
+
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+
+                        background:
+                            "linear-gradient(135deg, #2563EB, #4F46E5)",
+
+                        color: "#FFFFFF",
+
+                        boxShadow:
+                            "0 6px 16px rgba(37, 99, 235, 0.20)",
+                    }}
+                >
+                    <EmailIcon />
+                </Box>
+
+
+                <Box>
+
+                    <Typography
+                        sx={{
+                            fontSize: {
+                                xs: "1.45rem",
+                                sm: "1.7rem",
+                            },
+
+                            fontWeight: 750,
+
+                            color: "#1E293B",
+
+                            lineHeight: 1.2,
+                        }}
+                    >
+                        Email Logs
+                    </Typography>
+
+
+                    <Typography
+                        sx={{
+                            mt: 0.5,
+
+                            fontSize: "0.85rem",
+
+                            color: "#64748B",
+                        }}
+                    >
+                        Track email delivery history and status
+                    </Typography>
+
+                </Box>
+
+            </Box>
 
 
             {/* ================================================= */}
@@ -333,78 +421,246 @@ function EmailLogs() {
 
             <Box
                 sx={{
-                    display: "flex",
+                    display: "grid",
+
+                    gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(3, 1fr)",
+                    },
+
                     gap: 2,
+
                     mb: 3,
-                    flexWrap: "wrap"
                 }}
             >
 
+                {/* TOTAL */}
+
                 <Paper
+                    elevation={0}
                     sx={{
-                        p: 2,
-                        minWidth: 180
+                        p: 2.2,
+
+                        borderRadius: "14px",
+
+                        border:
+                            "1px solid #DBEAFE",
+
+                        background:
+                            "linear-gradient(135deg, #EFF6FF 0%, #E0E7FF 100%)",
+
+                        boxShadow:
+                            "0 5px 18px rgba(15, 23, 42, 0.04)",
                     }}
                 >
 
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.5,
+                        }}
                     >
-                        Total Emails
-                    </Typography>
 
-                    <Typography variant="h5">
-                        {totalLogs}
-                    </Typography>
+                        <Box
+                            sx={{
+                                width: 40,
+                                height: 40,
+
+                                borderRadius: "10px",
+
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+
+                                backgroundColor: "#DBEAFE",
+
+                                color: "#2563EB",
+                            }}
+                        >
+                            <EmailIcon />
+                        </Box>
+
+
+                        <Box>
+
+                            <Typography
+                                sx={{
+                                    fontSize: "0.78rem",
+                                    color: "#64748B",
+                                    fontWeight: 600,
+                                }}
+                            >
+                                Total Emails
+                            </Typography>
+
+                            <Typography
+                                sx={{
+                                    fontSize: "1.55rem",
+                                    fontWeight: 750,
+                                    color: "#1E3A8A",
+                                }}
+                            >
+                                {totalLogs}
+                            </Typography>
+
+                        </Box>
+
+                    </Box>
 
                 </Paper>
 
 
+                {/* SUCCESS */}
+
                 <Paper
+                    elevation={0}
                     sx={{
-                        p: 2,
-                        minWidth: 180
+                        p: 2.2,
+
+                        borderRadius: "14px",
+
+                        border:
+                            "1px solid #A7F3D0",
+
+                        background:
+                            "linear-gradient(135deg, #ECFDF5 0%, #DFF7EC 100%)",
+
+                        boxShadow:
+                            "0 5px 18px rgba(15, 23, 42, 0.04)",
                     }}
                 >
 
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.5,
+                        }}
                     >
-                        Successful
-                    </Typography>
 
-                    <Typography
-                        variant="h5"
-                        color="success.main"
-                    >
-                        {successfulLogs}
-                    </Typography>
+                        <Box
+                            sx={{
+                                width: 40,
+                                height: 40,
+
+                                borderRadius: "10px",
+
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+
+                                backgroundColor: "#D1FAE5",
+
+                                color: "#059669",
+                            }}
+                        >
+                            <CheckCircleIcon />
+                        </Box>
+
+
+                        <Box>
+
+                            <Typography
+                                sx={{
+                                    fontSize: "0.78rem",
+                                    color: "#64748B",
+                                    fontWeight: 600,
+                                }}
+                            >
+                                Successful
+                            </Typography>
+
+                            <Typography
+                                sx={{
+                                    fontSize: "1.55rem",
+                                    fontWeight: 750,
+                                    color: "#047857",
+                                }}
+                            >
+                                {successfulLogs}
+                            </Typography>
+
+                        </Box>
+
+                    </Box>
 
                 </Paper>
 
 
+                {/* FAILED */}
+
                 <Paper
+                    elevation={0}
                     sx={{
-                        p: 2,
-                        minWidth: 180
+                        p: 2.2,
+
+                        borderRadius: "14px",
+
+                        border:
+                            "1px solid #FECACA",
+
+                        background:
+                            "linear-gradient(135deg, #FEF2F2 0%, #FDE8E8 100%)",
+
+                        boxShadow:
+                            "0 5px 18px rgba(15, 23, 42, 0.04)",
                     }}
                 >
 
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.5,
+                        }}
                     >
-                        Failed
-                    </Typography>
 
-                    <Typography
-                        variant="h5"
-                        color="error.main"
-                    >
-                        {failedLogs}
-                    </Typography>
+                        <Box
+                            sx={{
+                                width: 40,
+                                height: 40,
+
+                                borderRadius: "10px",
+
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+
+                                backgroundColor: "#FEE2E2",
+
+                                color: "#DC2626",
+                            }}
+                        >
+                            <ErrorIcon />
+                        </Box>
+
+
+                        <Box>
+
+                            <Typography
+                                sx={{
+                                    fontSize: "0.78rem",
+                                    color: "#64748B",
+                                    fontWeight: 600,
+                                }}
+                            >
+                                Failed
+                            </Typography>
+
+                            <Typography
+                                sx={{
+                                    fontSize: "1.55rem",
+                                    fontWeight: 750,
+                                    color: "#B91C1C",
+                                }}
+                            >
+                                {failedLogs}
+                            </Typography>
+
+                        </Box>
+
+                    </Box>
 
                 </Paper>
 
@@ -416,9 +672,22 @@ function EmailLogs() {
             {/* ================================================= */}
 
             <Paper
+                elevation={0}
                 sx={{
-                    p: 2,
-                    mb: 3
+                    p: 2.2,
+
+                    mb: 3,
+
+                    borderRadius: "16px",
+
+                    border:
+                        "1px solid #D8DEEE",
+
+                    background:
+                        "linear-gradient(135deg, #F0F4FF 0%, #F8FAFC 100%)",
+
+                    boxShadow:
+                        "0 6px 20px rgba(15, 23, 42, 0.04)",
                 }}
             >
 
@@ -427,7 +696,7 @@ function EmailLogs() {
                         display: "flex",
                         gap: 2,
                         alignItems: "center",
-                        flexWrap: "wrap"
+                        flexWrap: "wrap",
                     }}
                 >
 
@@ -444,7 +713,25 @@ function EmailLogs() {
                         }
                         sx={{
                             flex: 1,
-                            minWidth: 250
+                            minWidth: 250,
+
+                            "& .MuiOutlinedInput-root": {
+                                backgroundColor: "#FFFFFF",
+
+                                borderRadius: "10px",
+
+                                "& fieldset": {
+                                    borderColor: "#CBD5E1",
+                                },
+
+                                "&:hover fieldset": {
+                                    borderColor: "#93C5FD",
+                                },
+
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "#2563EB",
+                                },
+                            },
                         }}
                     />
 
@@ -461,7 +748,21 @@ function EmailLogs() {
                             )
                         }
                         sx={{
-                            minWidth: 160
+                            minWidth: 160,
+
+                            "& .MuiOutlinedInput-root": {
+                                backgroundColor: "#FFFFFF",
+
+                                borderRadius: "10px",
+
+                                "& fieldset": {
+                                    borderColor: "#CBD5E1",
+                                },
+
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "#2563EB",
+                                },
+                            },
                         }}
                     >
 
@@ -495,7 +796,21 @@ function EmailLogs() {
                             shrink: true
                         }}
                         sx={{
-                            minWidth: 180
+                            minWidth: 180,
+
+                            "& .MuiOutlinedInput-root": {
+                                backgroundColor: "#FFFFFF",
+
+                                borderRadius: "10px",
+
+                                "& fieldset": {
+                                    borderColor: "#CBD5E1",
+                                },
+
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "#2563EB",
+                                },
+                            },
                         }}
                     />
 
@@ -509,6 +824,30 @@ function EmailLogs() {
                         }
                         onClick={loadLogs}
                         disabled={loading}
+
+                        sx={{
+                            minHeight: 44,
+
+                            px: 2,
+
+                            borderRadius: "10px",
+
+                            background:
+                                "linear-gradient(135deg, #2563EB, #4F46E5)",
+
+                            fontWeight: 600,
+
+                            boxShadow:
+                                "0 5px 14px rgba(37, 99, 235, 0.18)",
+
+                            "&:hover": {
+                                background:
+                                    "linear-gradient(135deg, #1D4ED8, #4338CA)",
+
+                                transform:
+                                    "translateY(-1px)",
+                            },
+                        }}
                     >
                         Refresh
                     </Button>
@@ -522,6 +861,28 @@ function EmailLogs() {
                             <ClearIcon />
                         }
                         onClick={clearFilters}
+
+                        sx={{
+                            minHeight: 44,
+
+                            px: 2,
+
+                            borderRadius: "10px",
+
+                            borderColor: "#CBD5E1",
+
+                            color: "#475569",
+
+                            backgroundColor: "#F8FAFC",
+
+                            fontWeight: 600,
+
+                            "&:hover": {
+                                borderColor: "#94A3B8",
+
+                                backgroundColor: "#F1F5F9",
+                            },
+                        }}
                     >
                         Clear
                     </Button>
@@ -532,19 +893,29 @@ function EmailLogs() {
                 {/* FILTER RESULT */}
 
                 <Typography
-                    variant="body2"
-                    color="text.secondary"
                     sx={{
-                        mt: 2
+                        mt: 2,
+
+                        fontSize: "0.78rem",
+
+                        color: "#64748B",
                     }}
                 >
 
                     Showing{" "}
-                    <strong>
+                    <strong
+                        style={{
+                            color: "#334155"
+                        }}
+                    >
                         {filteredLogs.length}
                     </strong>{" "}
                     of{" "}
-                    <strong>
+                    <strong
+                        style={{
+                            color: "#334155"
+                        }}
+                    >
                         {totalLogs}
                     </strong>{" "}
                     email logs
@@ -555,289 +926,886 @@ function EmailLogs() {
 
 
             {/* ================================================= */}
-            {/* TABLE */}
+            {/* TABLE CARD */}
             {/* ================================================= */}
 
-            <TableContainer
-                component={Paper}
+            <Paper
+                elevation={0}
                 sx={{
-                    overflowX: "auto"
+                    borderRadius: "18px",
+
+                    overflow: "hidden",
+
+                    border:
+                        "1px solid #D7DDF0",
+
+                    background:
+                        "linear-gradient(135deg, #EEF2FF 0%, #F1F5F9 100%)",
+
+                    boxShadow:
+                        "0 8px 25px rgba(15, 23, 42, 0.05)",
                 }}
             >
 
-                <Table
+                {/* TABLE TITLE */}
+
+                <Box
                     sx={{
-                        minWidth: 1100
+                        px: {
+                            xs: 2,
+                            sm: 2.5,
+                        },
+
+                        py: 2,
+
+                        display: "flex",
+
+                        justifyContent: "space-between",
+
+                        alignItems: "center",
+
+                        borderBottom:
+                            "1px solid #D8DEEE",
+
+                        background:
+                            "linear-gradient(135deg, #E0E7FF 0%, #EDE9FE 100%)",
                     }}
                 >
 
-                    <TableHead>
+                    <Box>
 
-                        <TableRow>
+                        <Typography
+                            sx={{
+                                fontSize: "1rem",
+                                fontWeight: 700,
+                                color: "#1E293B",
+                            }}
+                        >
+                            Email Activity
+                        </Typography>
 
-                            <TableCell>
-                                ID
-                            </TableCell>
+                        <Typography
+                            sx={{
+                                mt: 0.3,
+                                fontSize: "0.75rem",
+                                color: "#64748B",
+                            }}
+                        >
+                            Email delivery history
+                        </Typography>
 
-                            <TableCell>
-                                Employee
-                            </TableCell>
-
-                            <TableCell>
-                                Template
-                            </TableCell>
-
-                            <TableCell>
-                                Recipient
-                            </TableCell>
-
-                            <TableCell>
-                                Subject
-                            </TableCell>
-
-                            <TableCell>
-                                Status
-                            </TableCell>
-
-                            <TableCell>
-                                Error
-                            </TableCell>
-
-                            <TableCell>
-                                Sent At
-                            </TableCell>
-
-                        </TableRow>
-
-                    </TableHead>
+                    </Box>
 
 
-                    <TableBody>
+                    <Chip
+                        icon={<EmailIcon />}
+                        label={`${filteredLogs.length} Records`}
+                        size="small"
 
-                        {loading ? (
+                        sx={{
+                            color: "#2563EB",
+
+                            backgroundColor:
+                                "#DBEAFE",
+
+                            border:
+                                "1px solid #BFDBFE",
+
+                            fontWeight: 600,
+
+                            "& .MuiChip-icon": {
+                                color: "#2563EB",
+                            },
+                        }}
+                    />
+
+                </Box>
+
+
+                {/* TABLE */}
+
+                <TableContainer
+                    sx={{
+                        maxHeight: 560,
+
+                        overflow: "auto",
+
+                        backgroundColor: "#F8FAFC",
+
+                        "&::-webkit-scrollbar": {
+                            width: 8,
+                            height: 8,
+                        },
+
+                        "&::-webkit-scrollbar-track": {
+                            background: "#E2E8F0",
+                        },
+
+                        "&::-webkit-scrollbar-thumb": {
+                            background: "#94A3B8",
+                            borderRadius: 10,
+                        },
+
+                        "&::-webkit-scrollbar-thumb:hover": {
+                            background: "#64748B",
+                        },
+
+                        scrollbarWidth: "thin",
+
+                        scrollbarColor:
+                            "#94A3B8 #E2E8F0",
+                    }}
+                >
+
+                    <Table
+                        stickyHeader
+                        sx={{
+                            minWidth: 1100,
+
+                            backgroundColor: "#F8FAFC",
+                        }}
+                    >
+
+                        {/* ================================================= */}
+                        {/* TABLE HEAD */}
+                        {/* ================================================= */}
+
+                        <TableHead>
 
                             <TableRow>
 
                                 <TableCell
-                                    colSpan={8}
-                                    align="center"
+                                    sx={{
+                                        minWidth: 70,
+
+                                        position: "sticky",
+                                        top: 0,
+
+                                        zIndex: 5,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
                                 >
+                                    ID
+                                </TableCell>
 
-                                    Loading email logs...
 
+                                <TableCell
+                                    sx={{
+                                        minWidth: 170,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Employee
+                                </TableCell>
+
+
+                                <TableCell
+                                    sx={{
+                                        minWidth: 170,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Template
+                                </TableCell>
+
+
+                                <TableCell
+                                    sx={{
+                                        minWidth: 240,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Recipient
+                                </TableCell>
+
+
+                                <TableCell
+                                    sx={{
+                                        minWidth: 220,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Subject
+                                </TableCell>
+
+
+                                <TableCell
+                                    sx={{
+                                        minWidth: 120,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Status
+                                </TableCell>
+
+
+                                <TableCell
+                                    sx={{
+                                        minWidth: 130,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Error
+                                </TableCell>
+
+
+                                <TableCell
+                                    sx={{
+                                        minWidth: 190,
+
+                                        background:
+                                            "#E0E7FF",
+
+                                        color: "#475569",
+
+                                        fontWeight: 700,
+
+                                        fontSize: "0.73rem",
+
+                                        textTransform:
+                                            "uppercase",
+
+                                        letterSpacing:
+                                            "0.04em",
+
+                                        borderBottom:
+                                            "1px solid #C7D2FE",
+                                    }}
+                                >
+                                    Sent At
                                 </TableCell>
 
                             </TableRow>
 
-                        ) : paginatedLogs.length === 0 ? (
+                        </TableHead>
 
-                            <TableRow>
 
-                                <TableCell
-                                    colSpan={8}
-                                    align="center"
-                                >
+                        {/* ================================================= */}
+                        {/* TABLE BODY */}
+                        {/* ================================================= */}
 
-                                    <Typography
+                        <TableBody>
+
+                            {loading ? (
+
+                                <TableRow>
+
+                                    <TableCell
+                                        colSpan={8}
+                                        align="center"
+
                                         sx={{
-                                            py: 3
+                                            py: 7,
+
+                                            color: "#64748B",
+
+                                            backgroundColor:
+                                                "#F8FAFC",
                                         }}
                                     >
-                                        No email logs found.
-                                    </Typography>
 
-                                </TableCell>
+                                        <Typography
+                                            sx={{
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            Loading email logs...
+                                        </Typography>
 
-                            </TableRow>
+                                    </TableCell>
 
-                        ) : (
+                                </TableRow>
 
-                            paginatedLogs.map(
-                                (log) => (
+                            ) : paginatedLogs.length === 0 ? (
 
-                                    <TableRow
-                                        key={log.id}
-                                        hover
+                                <TableRow>
+
+                                    <TableCell
+                                        colSpan={8}
+                                        align="center"
+
+                                        sx={{
+                                            py: 7,
+
+                                            backgroundColor:
+                                                "#F8FAFC",
+                                        }}
                                     >
 
-                                        {/* ID */}
+                                        <EmailIcon
+                                            sx={{
+                                                fontSize: 42,
 
-                                        <TableCell>
-                                            {log.id}
-                                        </TableCell>
+                                                color: "#94A3B8",
 
+                                                mb: 1,
+                                            }}
+                                        />
 
-                                        {/* EMPLOYEE */}
+                                        <Typography
+                                            sx={{
+                                                fontWeight: 600,
 
-                                        <TableCell>
+                                                color: "#475569",
+                                            }}
+                                        >
+                                            No email logs found.
+                                        </Typography>
 
-                                            <Typography
-                                                variant="body2"
-                                                fontWeight="bold"
+                                        <Typography
+                                            sx={{
+                                                mt: 0.5,
+
+                                                fontSize: "0.8rem",
+
+                                                color: "#94A3B8",
+                                            }}
+                                        >
+                                            Try changing your filters.
+                                        </Typography>
+
+                                    </TableCell>
+
+                                </TableRow>
+
+                            ) : (
+
+                                paginatedLogs.map(
+                                    (log) => {
+
+                                        const statusStyle =
+                                            getStatusStyle(
+                                                log.status
+                                            );
+
+                                        return (
+
+                                            <TableRow
+                                                key={log.id}
+
+                                                hover
+
+                                                sx={{
+                                                    backgroundColor:
+                                                        "#F8FAFC",
+
+                                                    transition:
+                                                        "all 0.2s ease",
+
+                                                    "&:hover": {
+                                                        backgroundColor:
+                                                            "#EFF6FF",
+
+                                                        "& td": {
+                                                            borderColor:
+                                                                "#BFDBFE",
+                                                        },
+                                                    },
+
+                                                    "&:last-child td": {
+                                                        borderBottom:
+                                                            "none",
+                                                    },
+                                                }}
                                             >
-                                                {log.employee_name ||
-                                                    "Unknown"}
-                                            </Typography>
 
-                                            <Typography
-                                                variant="caption"
-                                                color="text.secondary"
-                                            >
-                                                {log.employee_id}
-                                            </Typography>
+                                                {/* ID */}
 
-                                        </TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        fontWeight: 700,
 
+                                                        color: "#2563EB",
 
-                                        {/* TEMPLATE */}
+                                                        fontSize:
+                                                            "0.84rem",
 
-                                        <TableCell>
-
-                                            {log.template_name ||
-                                                "No Template"}
-
-                                        </TableCell>
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
+                                                    {log.id}
+                                                </TableCell>
 
 
-                                        {/* RECIPIENT */}
+                                                {/* EMPLOYEE */}
 
-                                        <TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
 
-                                            {log.recipient_email}
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize:
+                                                                "0.84rem",
 
-                                        </TableCell>
+                                                            fontWeight:
+                                                                650,
+
+                                                            color:
+                                                                "#1E293B",
+                                                        }}
+                                                    >
+                                                        {log.employee_name ||
+                                                            "Unknown"}
+                                                    </Typography>
+
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize:
+                                                                "0.72rem",
+
+                                                            color:
+                                                                "#64748B",
+
+                                                            mt: 0.2,
+                                                        }}
+                                                    >
+                                                        {log.employee_id}
+                                                    </Typography>
+
+                                                </TableCell>
 
 
-                                        {/* SUBJECT */}
+                                                {/* TEMPLATE */}
 
-                                        <TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        color:
+                                                            "#475569",
 
-                                            {log.subject}
+                                                        fontSize:
+                                                            "0.83rem",
 
-                                        </TableCell>
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
+
+                                                    {log.template_name ||
+                                                        "No Template"}
+
+                                                </TableCell>
 
 
-                                        {/* STATUS */}
+                                                {/* RECIPIENT */}
 
-                                        <TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        color:
+                                                            "#475569",
 
-                                            <Chip
-                                                label={
-                                                    log.status
-                                                }
-                                                color={
-                                                    String(
+                                                        fontSize:
+                                                            "0.83rem",
+
+                                                        whiteSpace:
+                                                            "nowrap",
+
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
+
+                                                    {log.recipient_email}
+
+                                                </TableCell>
+
+
+                                                {/* SUBJECT */}
+
+                                                <TableCell
+                                                    sx={{
+                                                        color:
+                                                            "#334155",
+
+                                                        fontSize:
+                                                            "0.83rem",
+
+                                                        maxWidth: 260,
+
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
+
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize:
+                                                                "0.83rem",
+
+                                                            overflow:
+                                                                "hidden",
+
+                                                            textOverflow:
+                                                                "ellipsis",
+
+                                                            whiteSpace:
+                                                                "nowrap",
+                                                        }}
+                                                    >
+                                                        {log.subject}
+                                                    </Typography>
+
+                                                </TableCell>
+
+
+                                                {/* STATUS */}
+
+                                                <TableCell
+                                                    sx={{
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
+
+                                                    <Chip
+                                                        icon={
+                                                            String(
+                                                                log.status
+                                                            ).toUpperCase() ===
+                                                            "SUCCESS"
+                                                                ? (
+                                                                    <CheckCircleIcon />
+                                                                )
+                                                                : (
+                                                                    <ErrorIcon />
+                                                                )
+                                                        }
+
+                                                        label={
+                                                            log.status
+                                                        }
+
+                                                        size="small"
+
+                                                        sx={{
+                                                            color:
+                                                                statusStyle.color,
+
+                                                            backgroundColor:
+                                                                statusStyle.background,
+
+                                                            border:
+                                                                `1px solid ${statusStyle.border}`,
+
+                                                            fontWeight: 650,
+
+                                                            fontSize:
+                                                                "0.7rem",
+
+                                                            "& .MuiChip-icon": {
+                                                                color:
+                                                                    statusStyle.color,
+
+                                                                fontSize:
+                                                                    "16px",
+                                                            },
+                                                        }}
+                                                    />
+
+                                                </TableCell>
+
+
+                                                {/* ERROR */}
+
+                                                <TableCell
+                                                    sx={{
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
+                                                >
+
+                                                    {String(
                                                         log.status
                                                     ).toUpperCase() ===
-                                                    "SUCCESS"
-                                                        ? "success"
-                                                        : "error"
-                                                }
-                                                size="small"
-                                            />
+                                                        "FAILED" &&
+                                                    log.error_message ? (
 
-                                        </TableCell>
+                                                        <Button
+                                                            size="small"
+
+                                                            startIcon={
+                                                                <ErrorIcon />
+                                                            }
+
+                                                            onClick={() =>
+                                                                openErrorDialog(
+                                                                    log
+                                                                )
+                                                            }
+
+                                                            sx={{
+                                                                color:
+                                                                    "#DC2626",
+
+                                                                fontWeight:
+                                                                    600,
+
+                                                                textTransform:
+                                                                    "none",
+
+                                                                borderRadius:
+                                                                    "7px",
+
+                                                                "&:hover": {
+                                                                    backgroundColor:
+                                                                        "#FEE2E2",
+                                                                },
+                                                            }}
+                                                        >
+                                                            View Error
+                                                        </Button>
+
+                                                    ) : (
+
+                                                        <Typography
+                                                            sx={{
+                                                                color:
+                                                                    "#94A3B8",
+                                                            }}
+                                                        >
+                                                            —
+                                                        </Typography>
+
+                                                    )}
+
+                                                </TableCell>
 
 
-                                        {/* ERROR */}
+                                                {/* DATE */}
 
-                                        <TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        color:
+                                                            "#64748B",
 
-                                            {String(
-                                                log.status
-                                            ).toUpperCase() ===
-                                                "FAILED" &&
-                                            log.error_message ? (
+                                                        fontSize:
+                                                            "0.8rem",
 
-                                                <Button
-                                                    size="small"
-                                                    color="error"
-                                                    onClick={() =>
-                                                        openErrorDialog(
-                                                            log
-                                                        )
-                                                    }
+                                                        whiteSpace:
+                                                            "nowrap",
+
+                                                        borderColor:
+                                                            "#E2E8F0",
+                                                    }}
                                                 >
-                                                    View Error
-                                                </Button>
 
-                                            ) : (
+                                                    {log.sent_at
+                                                        ? new Date(
+                                                            log.sent_at
+                                                        ).toLocaleString()
+                                                        : "—"}
 
-                                                "—"
+                                                </TableCell>
 
-                                            )}
+                                            </TableRow>
 
-                                        </TableCell>
+                                        );
 
-
-                                        {/* DATE */}
-
-                                        <TableCell>
-
-                                            {log.sent_at
-                                                ? new Date(
-                                                    log.sent_at
-                                                ).toLocaleString()
-                                                : "—"}
-
-                                        </TableCell>
-
-                                    </TableRow>
-
+                                    }
                                 )
-                            )
 
-                        )}
+                            )}
 
-                    </TableBody>
+                        </TableBody>
 
-                </Table>
+                    </Table>
+
+                </TableContainer>
 
 
                 {/* ================================================= */}
                 {/* PAGINATION */}
                 {/* ================================================= */}
 
-                <TablePagination
-                    component="div"
-                    count={
-                        filteredLogs.length
-                    }
-                    page={page}
-                    onPageChange={(
-                        event,
-                        newPage
-                    ) => {
+                <Box
+                    sx={{
+                        background:
+                            "#F1F5F9",
 
-                        setPage(newPage);
-
+                        borderTop:
+                            "1px solid #D8DEEE",
                     }}
-                    rowsPerPage={
-                        rowsPerPage
-                    }
-                    onRowsPerPageChange={(
-                        event
-                    ) => {
+                >
 
-                        setRowsPerPage(
-                            parseInt(
-                                event.target.value,
-                                10
-                            )
-                        );
+                    <TablePagination
+                        component="div"
 
-                        setPage(0);
+                        count={
+                            filteredLogs.length
+                        }
 
-                    }}
-                    rowsPerPageOptions={[
-                        10,
-                        25,
-                        50,
-                        100
-                    ]}
-                />
+                        page={page}
 
-            </TableContainer>
+                        onPageChange={(
+                            event,
+                            newPage
+                        ) => {
+
+                            setPage(newPage);
+
+                        }}
+
+                        rowsPerPage={
+                            rowsPerPage
+                        }
+
+                        onRowsPerPageChange={(
+                            event
+                        ) => {
+
+                            setRowsPerPage(
+                                parseInt(
+                                    event.target.value,
+                                    10
+                                )
+                            );
+
+                            setPage(0);
+
+                        }}
+
+                        rowsPerPageOptions={[
+                            10,
+                            25,
+                            50,
+                            100
+                        ]}
+
+                        sx={{
+                            color: "#475569",
+
+                            "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": {
+                                fontSize: "0.78rem",
+                            },
+                        }}
+                    />
+
+                </Box>
+
+            </Paper>
 
 
             {/* ================================================= */}
@@ -848,19 +1816,53 @@ function EmailLogs() {
                 open={
                     selectedError !== null
                 }
+
                 onClose={
                     closeErrorDialog
                 }
+
                 fullWidth
+
                 maxWidth="md"
+
+                PaperProps={{
+                    sx: {
+                        borderRadius: "16px",
+
+                        border:
+                            "1px solid #FECACA",
+
+                        background:
+                            "#FFF7F7",
+
+                        boxShadow:
+                            "0 18px 45px rgba(15, 23, 42, 0.15)",
+                    }
+                }}
             >
 
-                <DialogTitle>
+                <DialogTitle
+                    sx={{
+                        color: "#991B1B",
+
+                        fontWeight: 700,
+
+                        background:
+                            "linear-gradient(135deg, #FEE2E2, #FEF2F2)",
+
+                        borderBottom:
+                            "1px solid #FECACA",
+                    }}
+                >
                     Email Error Details
                 </DialogTitle>
 
 
-                <DialogContent>
+                <DialogContent
+                    sx={{
+                        pt: 3,
+                    }}
+                >
 
                     {selectedError && (
 
@@ -868,10 +1870,16 @@ function EmailLogs() {
 
                             <Typography
                                 sx={{
-                                    mb: 1
+                                    mb: 1.5,
+
+                                    color: "#475569",
                                 }}
                             >
-                                <strong>
+                                <strong
+                                    style={{
+                                        color: "#1E293B"
+                                    }}
+                                >
                                     Log ID:
                                 </strong>{" "}
                                 {selectedError.id}
@@ -880,10 +1888,16 @@ function EmailLogs() {
 
                             <Typography
                                 sx={{
-                                    mb: 1
+                                    mb: 1.5,
+
+                                    color: "#475569",
                                 }}
                             >
-                                <strong>
+                                <strong
+                                    style={{
+                                        color: "#1E293B"
+                                    }}
+                                >
                                     Employee:
                                 </strong>{" "}
                                 {
@@ -895,10 +1909,16 @@ function EmailLogs() {
 
                             <Typography
                                 sx={{
-                                    mb: 1
+                                    mb: 1.5,
+
+                                    color: "#475569",
                                 }}
                             >
-                                <strong>
+                                <strong
+                                    style={{
+                                        color: "#1E293B"
+                                    }}
+                                >
                                     Recipient:
                                 </strong>{" "}
                                 {
@@ -909,19 +1929,50 @@ function EmailLogs() {
 
                             <Typography
                                 sx={{
-                                    mb: 2
+                                    mb: 2,
+
+                                    display: "flex",
+
+                                    alignItems: "center",
+
+                                    gap: 1,
+
+                                    color: "#475569",
                                 }}
                             >
-                                <strong>
+                                <strong
+                                    style={{
+                                        color: "#1E293B"
+                                    }}
+                                >
                                     Status:
-                                </strong>{" "}
+                                </strong>
+
 
                                 <Chip
+                                    icon={<ErrorIcon />}
+
                                     label={
                                         selectedError.status
                                     }
-                                    color="error"
+
                                     size="small"
+
+                                    sx={{
+                                        color: "#B91C1C",
+
+                                        backgroundColor:
+                                            "#FEE2E2",
+
+                                        border:
+                                            "1px solid #FCA5A5",
+
+                                        fontWeight: 650,
+
+                                        "& .MuiChip-icon": {
+                                            color: "#DC2626",
+                                        },
+                                    }}
                                 />
 
                             </Typography>
@@ -929,6 +1980,16 @@ function EmailLogs() {
 
                             <Alert
                                 severity="error"
+
+                                sx={{
+                                    borderRadius: "10px",
+
+                                    border:
+                                        "1px solid #FECACA",
+
+                                    backgroundColor:
+                                        "#FEF2F2",
+                                }}
                             >
 
                                 {selectedError.error_message ||
@@ -943,12 +2004,30 @@ function EmailLogs() {
                 </DialogContent>
 
 
-                <DialogActions>
+                <DialogActions
+                    sx={{
+                        px: 3,
+                        pb: 2,
+                    }}
+                >
 
                     <Button
                         onClick={
                             closeErrorDialog
                         }
+
+                        sx={{
+                            color: "#475569",
+
+                            borderRadius: "8px",
+
+                            fontWeight: 600,
+
+                            "&:hover": {
+                                backgroundColor:
+                                    "#F1F5F9",
+                            },
+                        }}
                     >
                         Close
                     </Button>
@@ -957,7 +2036,7 @@ function EmailLogs() {
 
             </Dialog>
 
-        </>
+        </Box>
 
     );
 
