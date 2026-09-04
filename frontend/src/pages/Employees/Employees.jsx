@@ -348,13 +348,13 @@ function Employees() {
                     "Excel upload completed!\n\n" +
 
                     "Total Records: " +
-                    (data.total_records ?? 0) +
+                    (data.total_rows ?? 0) +
 
                     "\nImported: " +
-                    (data.imported_records ?? 0) +
+                    (data.inserted ?? 0) +
 
-                    "\nSkipped: " +
-                    (data.skipped_records ?? 0)
+                    "\nFailed: " +
+                    (data.failed ?? 0)
                 );
 
 
