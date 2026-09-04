@@ -36,6 +36,15 @@ services:
       DB_USER: postgres
       DB_PASSWORD: password
 
+      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_USE_TLS: ${MAIL_USE_TLS}
+      MAIL_USE_SSL: ${MAIL_USE_SSL}
+
+      SECRET_KEY: ${SECRET_KEY}
+
     ports:
       - "5000:5000"
 
@@ -43,21 +52,20 @@ services:
       postgres:
         condition: service_healthy
 
+
   frontend:
-      build:
-        context: ./frontend
-        dockerfile: Dockerfile
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
 
-      
+    container_name: mail-frontend
 
-      container_name: mail-frontend
+    ports:
+      - "5173:80"
 
-      
-      ports:
-        - "5173:80"
+    depends_on:
+      - backend
 
-      depends_on:
-        - backend
 
 volumes:
   postgres_data:
