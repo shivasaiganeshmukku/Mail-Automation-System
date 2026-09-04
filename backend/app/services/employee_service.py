@@ -225,27 +225,21 @@ class EmployeeService:
     # ============================================================
 
     @staticmethod
-    def delete_employee(
-        employee_id
-    ):
+    def delete_employee(employee_id):
 
         employee = Employee.query.get(
             employee_id
         )
 
-
         if not employee:
-
             return {
                 "success": False,
                 "message": "Employee not found"
             }
 
-
-        db.session.delete(employee)
+        employee.status = False
 
         db.session.commit()
-
 
         return {
             "success": True,
