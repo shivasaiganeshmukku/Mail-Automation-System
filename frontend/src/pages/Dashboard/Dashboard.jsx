@@ -46,8 +46,12 @@ function Dashboard() {
         EmailLogService.getAllLogs()
             .then((response) => {
 
+                const logs = response.data?.data;
+
                 setRecentLogs(
-                    response.data.data.slice(0, 5)
+                    Array.isArray(logs)
+                        ? logs.slice(0, 5)
+                        : []
                 );
 
             })

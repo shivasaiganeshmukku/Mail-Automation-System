@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import axios from "axios";
+import api from "../services/api";
 
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -80,8 +80,8 @@ function BirthdayStatus() {
 
             try {
 
-                const response = await axios.get(
-                    "http://127.0.0.1:5000/api/v1/birthday-status"
+                const response = await api.get(
+                    "/birthday-status"
                 );
 
                 setData(response.data);
