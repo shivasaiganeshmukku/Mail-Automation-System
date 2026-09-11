@@ -11,6 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 
 import CakeIcon from "@mui/icons-material/Cake";
 import PeopleIcon from "@mui/icons-material/People";
@@ -18,13 +19,70 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
+import SendIcon from "@mui/icons-material/Send";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+
+// ============================================================
+// BIRTHDAY COLORS
+// ============================================================
+
+const birthdayColors = {
+    primary: "#EA580C",
+    dark: "#C2410C",
+    light: "#FB923C",
+
+    lightBackground:
+        "rgba(234, 88, 12, 0.07)",
+
+    darkBackground:
+        "rgba(234, 88, 12, 0.13)"
+};
 
 
 // ============================================================
 // STATUS COLORS
 // ============================================================
 
-const statusStyle = (status) => {
+const statusStyle = (
+    status,
+    mode = "light"
+) => {
+
+    if (mode === "dark") {
+
+        switch (status) {
+
+            case "SUCCESS":
+                return {
+                    color: "#34D399",
+                    background:
+                        "rgba(16, 185, 129, 0.14)"
+                };
+
+            case "PARTIAL":
+                return {
+                    color: "#FBBF24",
+                    background:
+                        "rgba(245, 158, 11, 0.14)"
+                };
+
+            case "FAILED":
+                return {
+                    color: "#F87171",
+                    background:
+                        "rgba(239, 68, 68, 0.14)"
+                };
+
+            default:
+                return {
+                    color: "#94A3B8",
+                    background:
+                        "rgba(148, 163, 184, 0.12)"
+                };
+        }
+    }
+
 
     switch (status) {
 
@@ -56,12 +114,95 @@ const statusStyle = (status) => {
 
 
 // ============================================================
+// DEPARTMENT COLORS
+// ============================================================
+
+const departmentColors = [
+
+    {
+        color: "#2563EB",
+        lightBackground:
+            "rgba(37, 99, 235, 0.08)",
+        darkBackground:
+            "rgba(37, 99, 235, 0.14)"
+    },
+
+    {
+        color: "#7C3AED",
+        lightBackground:
+            "rgba(124, 58, 237, 0.08)",
+        darkBackground:
+            "rgba(124, 58, 237, 0.14)"
+    },
+
+    {
+        color: "#059669",
+        lightBackground:
+            "rgba(5, 150, 105, 0.08)",
+        darkBackground:
+            "rgba(5, 150, 105, 0.14)"
+    },
+
+    {
+        color: "#EA580C",
+        lightBackground:
+            "rgba(234, 88, 12, 0.08)",
+        darkBackground:
+            "rgba(234, 88, 12, 0.14)"
+    },
+
+    {
+        color: "#0891B2",
+        lightBackground:
+            "rgba(8, 145, 178, 0.08)",
+        darkBackground:
+            "rgba(8, 145, 178, 0.14)"
+    },
+
+    {
+        color: "#DB2777",
+        lightBackground:
+            "rgba(219, 39, 119, 0.08)",
+        darkBackground:
+            "rgba(219, 39, 119, 0.14)"
+    }
+];
+
+
+// ============================================================
+// GET DEPARTMENT CONFIG
+// ============================================================
+
+function getDepartmentConfig(
+    departmentName
+) {
+
+    const index =
+        departmentName
+            ?.split("")
+            .reduce(
+                (sum, char) =>
+                    sum +
+                    char.charCodeAt(0),
+                0
+            ) %
+        departmentColors.length;
+
+    return (
+        departmentColors[index] ||
+        departmentColors[0]
+    );
+}
+
+
+// ============================================================
 // MAIN COMPONENT
 // ============================================================
 
 function BirthdayStatus() {
 
-    const [data, setData] = useState(null);
+    const [data, setData] =
+        useState(null);
 
     const [loading, setLoading] =
         useState(true);
@@ -69,22 +210,38 @@ function BirthdayStatus() {
     const [error, setError] =
         useState(null);
 
+    const [sendingEmployeeId, setSendingEmployeeId] =
+        useState(null);
+
+    const [selectedEmployee, setSelectedEmployee] =
+        useState(null);
+
+    const [hoveredEmployee, setHoveredEmployee] =
+        useState(null);
+
+    const [panelLocked, setPanelLocked] =
+        useState(false);
+
 
     // ========================================================
     // LOAD BIRTHDAY DATA
     // ========================================================
 
-    useEffect(() => {
-
-        const loadBirthdayStatus = async () => {
+    const loadBirthdayStatus =
+        async () => {
 
             try {
 
-                const response = await api.get(
-                    "/birthday-status"
+                const response =
+                    await api.get(
+                        "/birthday-status"
+                    );
+
+                setData(
+                    response.data
                 );
 
-                setData(response.data);
+                setError(null);
 
             } catch (error) {
 
@@ -102,12 +259,254 @@ function BirthdayStatus() {
                 setLoading(false);
 
             }
-
         };
+
+
+    // ========================================================
+    // INITIAL LOAD
+    // ========================================================
+
+    useEffect(() => {
 
         loadBirthdayStatus();
 
     }, []);
+
+
+    // ========================================================
+    // OUTSIDE CLICK
+    // ========================================================
+
+    useEffect(() => {
+
+        const handleOutsideClick =
+            (event) => {
+
+                if (
+                    !event.target.closest(
+                        "[data-birthday-interactive='true']"
+                    )
+                ) {
+
+                    setSelectedEmployee(
+                        null
+                    );
+
+                    setHoveredEmployee(
+                        null
+                    );
+
+                    setPanelLocked(
+                        false
+                    );
+
+                }
+
+            };
+
+
+        if (selectedEmployee) {
+
+            document.addEventListener(
+                "mousedown",
+                handleOutsideClick
+            );
+
+        }
+
+
+        return () => {
+
+            document.removeEventListener(
+                "mousedown",
+                handleOutsideClick
+            );
+
+        };
+
+    }, [selectedEmployee]);
+
+
+    // ========================================================
+    // FIND EMPLOYEE DEPARTMENT
+    // ========================================================
+
+    const getEmployeeDepartment =
+        (employee) => {
+
+            if (!employee) {
+                return null;
+            }
+
+            return (
+                data?.departments?.find(
+                    (department) =>
+                        department.department ===
+                        employee.department
+                ) || null
+            );
+
+        };
+
+
+    // ========================================================
+    // MOUSE ENTER
+    // ========================================================
+
+    const handleEmployeeMouseEnter =
+        (employee) => {
+
+            if (!panelLocked) {
+
+                setHoveredEmployee(
+                    employee
+                );
+
+            }
+
+        };
+
+
+    // ========================================================
+    // MOUSE LEAVE
+    // ========================================================
+
+    const handleEmployeeMouseLeave =
+        () => {
+
+            if (!panelLocked) {
+
+                setHoveredEmployee(
+                    null
+                );
+
+            }
+
+        };
+
+
+    // ========================================================
+    // EMPLOYEE CLICK
+    // ========================================================
+
+    const handleEmployeeClick =
+        (employee) => {
+
+            setSelectedEmployee(
+                employee
+            );
+
+            setHoveredEmployee(
+                employee
+            );
+
+            setPanelLocked(
+                true
+            );
+
+        };
+
+
+    // ========================================================
+    // BACK BUTTON
+    // ========================================================
+
+    const handleBack = () => {
+
+        setSelectedEmployee(
+            null
+        );
+
+        setHoveredEmployee(
+            null
+        );
+
+        setPanelLocked(
+            false
+        );
+
+    };
+
+
+    // ========================================================
+    // SEND MANUAL WISHES
+    // ========================================================
+
+    const handleSendWishes =
+        async (employee) => {
+
+            if (!employee) {
+                return;
+            }
+
+
+            if (sendingEmployeeId) {
+                return;
+            }
+
+
+            try {
+
+                setSendingEmployeeId(
+                    employee.id
+                );
+
+                setError(null);
+
+
+                const response =
+                    await api.post(
+                        `/birthday-send/${employee.id}`
+                    );
+
+
+                console.log(
+                    "BIRTHDAY SEND RESPONSE:",
+                    response.data
+                );
+
+
+                await loadBirthdayStatus();
+
+
+                /*
+                 * Keep the department card open.
+                 *
+                 * After reloading the birthday data,
+                 * find the updated employee and keep
+                 * the department panel selected.
+                 */
+
+                setData((currentData) => {
+
+                    return currentData;
+
+                });
+
+            } catch (error) {
+
+                console.error(
+                    "MANUAL BIRTHDAY SEND ERROR:",
+                    error
+                );
+
+                const message =
+                    error.response?.data?.message ||
+                    "Unable to send birthday wishes.";
+
+                setError(
+                    message
+                );
+
+            } finally {
+
+                setSendingEmployeeId(
+                    null
+                );
+
+            }
+
+        };
 
 
     // ========================================================
@@ -120,24 +519,38 @@ function BirthdayStatus() {
 
             <Paper
                 elevation={0}
+
                 sx={{
                     mt: 3,
-                    p: 5,
-                    borderRadius: 4,
+
+                    p: 4,
+
+                    borderRadius: 3,
+
                     textAlign: "center",
-                    border: "1px solid #7fb0ef",
-                    background: "#f7dee7"
+
+                    backgroundColor:
+                        "background.paper",
+
+                    border:
+                        "1px solid",
+
+                    borderColor:
+                        "divider"
                 }}
             >
 
                 <CircularProgress
-                    size={35}
+                    size={32}
                 />
+
 
                 <Typography
                     sx={{
-                        mt: 2,
-                        color: "#64748B"
+                        mt: 1.5,
+
+                        color:
+                            "text.secondary"
                     }}
                 >
                     Loading birthday status...
@@ -154,15 +567,17 @@ function BirthdayStatus() {
     // ERROR
     // ========================================================
 
-    if (error) {
+    if (error && !data) {
 
         return (
 
             <Alert
                 severity="error"
+
                 sx={{
                     mt: 3,
-                    borderRadius: 3
+
+                    borderRadius: 2
                 }}
             >
                 {error}
@@ -179,40 +594,64 @@ function BirthdayStatus() {
 
 
     // ========================================================
-    // MAIN CARD
+    // ACTIVE EMPLOYEE
+    // ========================================================
+
+    const activeEmployee =
+        selectedEmployee ||
+        hoveredEmployee;
+
+
+    const activeDepartment =
+        getEmployeeDepartment(
+            activeEmployee
+        );
+
+
+    // ========================================================
+    // MAIN BIRTHDAY CONTAINER
     // ========================================================
 
     return (
 
         <Paper
             elevation={0}
+
             sx={{
                 mt: 3,
 
                 p: {
                     xs: 2,
-                    sm: 3,
-                    md: 4
+
+                    sm: 2.5,
+
+                    md: 3
                 },
 
-                borderRadius: 4,
+                borderRadius: 3,
+
+                backgroundColor:
+                    "background.paper",
+
+                color:
+                    "text.primary",
 
                 border:
-                    "1px solid #b1ccf1",
+                    "1px solid",
 
-                background:
-                    "#f9f0f0",
+                borderColor:
+                    "divider",
+
+                backdropFilter:
+                    "blur(18px)",
+
+                WebkitBackdropFilter:
+                    "blur(18px)",
 
                 transition:
-                    "all 0.25s ease",
-
-                "&:hover": {
-                    boxShadow:
-                        "0 10px 30px rgba(15,23,42,0.06)"
-                }
+                    "background-color 0.35s ease, border-color 0.35s ease"
             }}
         >
-
 
             {/* =================================================
                 HEADER
@@ -220,44 +659,57 @@ function BirthdayStatus() {
 
             <Box
                 sx={{
-                    display: "flex",
+                    display:
+                        "flex",
 
                     justifyContent:
                         "space-between",
 
-                    alignItems: "center",
+                    alignItems:
+                        "center",
 
-                    gap: 2,
+                    gap:
+                        2,
 
-                    flexWrap: "wrap",
+                    flexWrap:
+                        "wrap",
 
-                    mb: 3
+                    mb:
+                        2.5
                 }}
             >
 
                 <Box
                     sx={{
-                        display: "flex",
+                        display:
+                            "flex",
 
-                        alignItems: "center",
+                        alignItems:
+                            "center",
 
-                        gap: 2
+                        gap:
+                            1.5
                     }}
                 >
 
                     <Avatar
                         sx={{
-                            width: 52,
-                            height: 52,
+                            width:
+                                44,
 
-                            background:
-                                "#FFF7ED",
+                            height:
+                                44,
+
+                            backgroundColor:
+                                "rgba(234, 88, 12, 0.10)",
 
                             color:
-                                "#EA580C"
+                                birthdayColors.primary
                         }}
                     >
+
                         <CakeIcon />
+
                     </Avatar>
 
 
@@ -266,12 +718,13 @@ function BirthdayStatus() {
                         <Typography
                             sx={{
                                 fontSize:
-                                    "1.4rem",
+                                    "1.2rem",
 
-                                fontWeight: 700,
+                                fontWeight:
+                                    700,
 
                                 color:
-                                    "#1E293B"
+                                    "text.primary"
                             }}
                         >
                             Birthday Status
@@ -279,10 +732,12 @@ function BirthdayStatus() {
 
 
                         <Typography
-                            variant="body2"
                             sx={{
                                 color:
-                                    "#64748B"
+                                    "text.secondary",
+
+                                fontSize:
+                                    "0.78rem"
                             }}
                         >
                             Today's birthday announcements
@@ -293,21 +748,28 @@ function BirthdayStatus() {
                 </Box>
 
 
-                {/* DATE */}
-
                 <Chip
-                    label={data.date}
+                    label={
+                        data.date
+                    }
+
+                    size="small"
+
                     sx={{
-                        fontWeight: 600,
+                        fontWeight:
+                            600,
 
                         color:
-                            "#C2410C",
+                            "warning.dark",
 
-                        background:
-                            "#efd1b0",
+                        backgroundColor:
+                            "rgba(245, 158, 11, 0.10)",
 
                         border:
-                            "1px solid #FED7AA"
+                            "1px solid",
+
+                        borderColor:
+                            "rgba(245, 158, 11, 0.20)"
                     }}
                 />
 
@@ -316,7 +778,8 @@ function BirthdayStatus() {
 
             <Divider
                 sx={{
-                    mb: 1
+                    mb:
+                        2.5
                 }}
             />
 
@@ -326,119 +789,187 @@ function BirthdayStatus() {
             ================================================= */}
 
             <SectionTitle
-                icon={<CakeIcon />}
-                title="Today's Birthdays"
-                color="#EA580C"
+                icon={
+                    <CakeIcon />
+                }
+
+                title={
+                    "Today's Birthdays"
+                }
+
+                color={
+                    birthdayColors.primary
+                }
             />
 
 
+            {/* =================================================
+                NO BIRTHDAYS
+            ================================================= */}
+
             {data.total_birthdays === 0 ? (
 
-                <Alert
-                    severity="info"
-                    sx={{
-                        mb: 5,
-                        borderRadius: 2
-                    }}
-                >
-                    No birthdays today.
-                </Alert>
+                <NoBirthdays />
 
             ) : (
 
-                <Grid
-                    container
-                    spacing={1}
+                <Box
                     sx={{
-                        mb: 5
+                        width:
+                            "100%",
+
+                        minHeight:
+                            132
                     }}
                 >
 
-                    {data.birthdays.map(
-                        (employee) => (
+                    <Grid
+                        container
+                        spacing={1.5}
+
+                        sx={{
+                            alignItems:
+                                "stretch"
+                        }}
+                    >
+
+                        {/* =================================================
+                            BIRTHDAY EMPLOYEES
+                        ================================================= */}
+
+                        {data.birthdays.map(
+                            (employee) => {
+
+                                const isActive =
+                                    activeEmployee?.id ===
+                                    employee.id;
+
+                                return (
+
+                                    <Grid
+                                        key={
+                                            employee.id
+                                        }
+
+                                        size={{
+                                            xs: 12,
+                                            sm: 6,
+                                            md: 4
+                                        }}
+                                    >
+
+                                        <BirthdayEmployeeWrapper
+                                            employee={
+                                                employee
+                                            }
+
+                                            isActive={
+                                                isActive
+                                            }
+
+                                            panelLocked={
+                                                panelLocked
+                                            }
+
+                                            activeDepartment={
+                                                isActive
+                                                    ? activeDepartment
+                                                    : null
+                                            }
+
+                                            sending={
+                                                sendingEmployeeId ===
+                                                employee.id
+                                            }
+
+                                            onSend={
+                                                handleSendWishes
+                                            }
+
+                                            onMouseEnter={() =>
+                                                handleEmployeeMouseEnter(
+                                                    employee
+                                                )
+                                            }
+
+                                            onMouseLeave={
+                                                handleEmployeeMouseLeave
+                                            }
+
+                                            onClick={() =>
+                                                handleEmployeeClick(
+                                                    employee
+                                                )
+                                            }
+
+                                            onBack={
+                                                handleBack
+                                            }
+
+                                        />
+
+                                    </Grid>
+
+                                );
+
+                            }
+                        )}
+
+
+                        {/* =================================================
+                            CELEBRATION
+                        ================================================= */}
+
+                        {data.total_birthdays === 1 && (
 
                             <Grid
-                                key={employee.id}
                                 size={{
                                     xs: 12,
-                                    sm: 6,
-                                    md: 4
+                                    md: 8
+                                }}
+
+                                sx={{
+                                    display: {
+                                        xs: "none",
+                                        md: "block"
+                                    }
                                 }}
                             >
 
-                                <BirthdayEmployee
-                                    employee={
-                                        employee
-                                    }
-                                />
+                                <BirthdayCelebration />
 
                             </Grid>
 
-                        )
-                    )}
+                        )}
 
-                </Grid>
+                    </Grid>
+
+                </Box>
 
             )}
 
 
             {/* =================================================
-                SEPARATOR
+                ERROR
             ================================================= */}
 
-            <Divider
-                sx={{
-                    my: 3,
-                    borderColor:
-                        "#f6f7f8"
-                }}
-            />
+            {error && (
 
+                <Alert
+                    severity="error"
 
-            {/* =================================================
-                DEPARTMENT STATUS
-            ================================================= */}
+                    sx={{
+                        mt:
+                            2,
 
-            <SectionTitle
-                icon={<PeopleIcon />}
-                title="Department Status"
-                color="#7C3AED"
-            />
+                        borderRadius:
+                            2
+                    }}
+                >
+                    {error}
+                </Alert>
 
-
-            <Grid
-                container
-                spacing={2}
-                sx={{
-                    mb: 4
-                }}
-            >
-
-                {data.departments.map(
-                    (department) => (
-
-                        <Grid
-                            key={
-                                department.department
-                            }
-                            size={{
-                                xs: 12,
-                                md: 6
-                            }}
-                        >
-
-                            <DepartmentCard
-                                department={
-                                    department
-                                }
-                            />
-
-                        </Grid>
-
-                    )
-                )}
-
-            </Grid>
+            )}
 
 
             {/* =================================================
@@ -448,23 +979,34 @@ function BirthdayStatus() {
             {data.job && (
 
                 <>
+
                     <Divider
                         sx={{
-                            my: 5,
-                            borderColor:
-                                "#E2E8F0"
+                            my:
+                                3
                         }}
                     />
 
                     <SectionTitle
-                        icon={<WorkIcon />}
-                        title="Birthday Job"
-                        color="#2563EB"
+                        icon={
+                            <WorkIcon />
+                        }
+
+                        title={
+                            "Birthday Job"
+                        }
+
+                        color={
+                            "#2563EB"
+                        }
                     />
 
                     <JobCard
-                        job={data.job}
+                        job={
+                            data.job
+                        }
                     />
+
                 </>
 
             )}
@@ -490,19 +1032,25 @@ function SectionTitle({
 
         <Box
             sx={{
-                display: "flex",
+                display:
+                    "flex",
 
-                alignItems: "center",
+                alignItems:
+                    "center",
 
-                gap: 1,
+                gap:
+                    1,
 
-                mb: 2
+                mb:
+                    1.5
             }}
         >
 
             <Box
                 sx={{
-                    display: "flex",
+                    display:
+                        "flex",
+
                     color
                 }}
             >
@@ -511,10 +1059,15 @@ function SectionTitle({
 
 
             <Typography
-                variant="h6"
                 sx={{
-                    fontWeight: 700,
-                    color: "#1E293B"
+                    fontWeight:
+                        700,
+
+                    fontSize:
+                        "1rem",
+
+                    color:
+                        "text.primary"
                 }}
             >
                 {title}
@@ -528,69 +1081,801 @@ function SectionTitle({
 
 
 // ============================================================
+// NO BIRTHDAYS
+// ============================================================
+
+function NoBirthdays() {
+
+    return (
+
+        <Box
+            sx={{
+                height:
+                    82,
+
+                width:
+                    "100%",
+
+                borderRadius:
+                    2.5,
+
+                display:
+                    "flex",
+
+                alignItems:
+                    "center",
+
+                justifyContent:
+                    "center",
+
+                gap: {
+                    xs: 1,
+
+                    sm: 2
+                },
+
+                px:
+                    2,
+
+                backgroundColor:
+                    "rgba(234, 88, 12, 0.035)",
+
+                border:
+                    "1px dashed",
+
+                borderColor:
+                    "rgba(234, 88, 12, 0.18)",
+
+                overflow:
+                    "hidden",
+
+                position:
+                    "relative"
+            }}
+        >
+
+            <Typography
+                sx={{
+                    fontSize:
+                        "1.5rem",
+
+                    animation:
+                        "emptyCake 2.2s ease-in-out infinite",
+
+                    "@keyframes emptyCake": {
+
+                        "0%, 100%": {
+
+                            transform:
+                                "translateY(0)"
+                        },
+
+                        "50%": {
+
+                            transform:
+                                "translateY(-4px)"
+                        }
+                    }
+                }}
+            >
+                🎂
+            </Typography>
+
+
+            <Box
+                sx={{
+                    textAlign:
+                        "center"
+                }}
+            >
+
+                <Typography
+                    sx={{
+                        fontSize:
+                            "0.88rem",
+
+                        fontWeight:
+                            700,
+
+                        color:
+                            "text.primary"
+                    }}
+                >
+                    No Birthdays Today
+                </Typography>
+
+
+                <Typography
+                    sx={{
+                        mt:
+                            0.2,
+
+                        fontSize:
+                            "0.67rem",
+
+                        color:
+                            "text.secondary"
+                    }}
+                >
+                    No employee birthdays are scheduled for today.
+                </Typography>
+
+            </Box>
+
+
+            <Box
+                sx={{
+                    display: {
+                        xs: "none",
+
+                        sm: "flex"
+                    },
+
+                    alignItems:
+                        "center",
+
+                    gap:
+                        0.5,
+
+                    px:
+                        1,
+
+                    py:
+                        0.45,
+
+                    borderRadius:
+                        2,
+
+                    backgroundColor:
+                        "rgba(16, 185, 129, 0.08)"
+                }}
+            >
+
+                <CheckCircleIcon
+                    sx={{
+                        fontSize:
+                            15,
+
+                        color:
+                            "success.main"
+                    }}
+                />
+
+
+                <Typography
+                    sx={{
+                        fontSize:
+                            "0.63rem",
+
+                        fontWeight:
+                            600,
+
+                        color:
+                            "success.main"
+                    }}
+                >
+                    All clear
+                </Typography>
+
+            </Box>
+
+
+            <Typography
+                sx={{
+                    fontSize:
+                        "0.75rem",
+
+                    animation:
+                        "emptySparkle 2s ease-in-out infinite",
+
+                    "@keyframes emptySparkle": {
+
+                        "0%, 100%": {
+
+                            opacity:
+                                0.25,
+
+                            transform:
+                                "scale(0.8)"
+                        },
+
+                        "50%": {
+
+                            opacity:
+                                1,
+
+                            transform:
+                                "scale(1.15)"
+                        }
+                    }
+                }}
+            >
+                ✨
+            </Typography>
+
+        </Box>
+
+    );
+
+}
+
+
+// ============================================================
+// BIRTHDAY CELEBRATION
+// ============================================================
+
+function BirthdayCelebration() {
+
+    return (
+
+        <Box
+            sx={{
+                position:
+                    "relative",
+
+                height:
+                    128,
+
+                width:
+                    "100%",
+
+                borderRadius:
+                    2.5,
+
+                overflow:
+                    "hidden",
+
+                display:
+                    "flex",
+
+                alignItems:
+                    "center",
+
+                justifyContent:
+                    "center",
+
+                backgroundColor:
+                    (theme) =>
+                        theme.palette.mode === "dark"
+                            ? "rgba(5, 150, 105, 0.06)"
+                            : "rgba(5, 150, 105, 0.035)",
+
+                border:
+                    "1px solid",
+
+                borderColor:
+                    (theme) =>
+                        theme.palette.mode === "dark"
+                            ? "rgba(52, 211, 153, 0.15)"
+                            : "rgba(5, 150, 105, 0.12)"
+            }}
+        >
+
+            <Box
+                sx={{
+                    position:
+                        "absolute",
+
+                    left:
+                        "15%",
+
+                    bottom:
+                        -18,
+
+                    width:
+                        16,
+
+                    height:
+                        22,
+
+                    borderRadius:
+                        "50% 50% 45% 45%",
+
+                    backgroundColor:
+                        "rgba(37, 99, 235, 0.18)",
+
+                    animation:
+                        "birthdayFloatOne 4s ease-in-out infinite",
+
+                    "@keyframes birthdayFloatOne": {
+
+                        "0%": {
+
+                            transform:
+                                "translateY(0) rotate(-4deg)"
+                        },
+
+                        "50%": {
+
+                            transform:
+                                "translateY(-65px) rotate(5deg)"
+                        },
+
+                        "100%": {
+
+                            transform:
+                                "translateY(-130px) rotate(-4deg)",
+
+                            opacity:
+                                0
+                        }
+                    }
+                }}
+            />
+
+
+            <Box
+                sx={{
+                    position:
+                        "absolute",
+
+                    right:
+                        "17%",
+
+                    bottom:
+                        -18,
+
+                    width:
+                        16,
+
+                    height:
+                        22,
+
+                    borderRadius:
+                        "50% 50% 45% 45%",
+
+                    backgroundColor:
+                        "rgba(234, 88, 12, 0.18)",
+
+                    animation:
+                        "birthdayFloatTwo 4.5s ease-in-out infinite 0.8s",
+
+                    "@keyframes birthdayFloatTwo": {
+
+                        "0%": {
+
+                            transform:
+                                "translateY(0) rotate(4deg)"
+                        },
+
+                        "50%": {
+
+                            transform:
+                                "translateY(-70px) rotate(-5deg)"
+                        },
+
+                        "100%": {
+
+                            transform:
+                                "translateY(-135px) rotate(4deg)",
+
+                            opacity:
+                                0
+                        }
+                    }
+                }}
+            />
+
+
+            <Box
+                sx={{
+                    position:
+                        "relative",
+
+                    zIndex:
+                        3,
+
+                    display:
+                        "flex",
+
+                    flexDirection: {
+                        xs: "column",
+
+                        sm: "row"
+                    },
+
+                    alignItems:
+                        "center",
+
+                    justifyContent:
+                        "center",
+
+                    gap: {
+                        xs: 0.4,
+
+                        sm: 1
+                    }
+                }}
+            >
+
+                <Typography
+                    sx={{
+                        fontSize:
+                            "1.2rem",
+
+                        animation:
+                            "birthdayCake 2s ease-in-out infinite",
+
+                        "@keyframes birthdayCake": {
+
+                            "0%, 100%": {
+
+                                transform:
+                                    "translateY(0) rotate(-3deg)"
+                            },
+
+                            "50%": {
+
+                                transform:
+                                    "translateY(-4px) rotate(3deg)"
+                            }
+                        }
+                    }}
+                >
+                    🎂
+                </Typography>
+
+
+                <Box
+                    sx={{
+                        textAlign:
+                            "center"
+                    }}
+                >
+
+                    <Box
+                        sx={{
+                            display:
+                                "flex",
+
+                            alignItems:
+                                "center",
+
+                            justifyContent:
+                                "center",
+
+                            gap:
+                                0.7
+                        }}
+                    >
+
+                        <Typography
+                            sx={{
+                                fontSize:
+                                    "0.92rem",
+
+                                fontWeight:
+                                    700,
+
+                                color:
+                                    "text.primary"
+                            }}
+                        >
+                            Happy Birthday!
+                        </Typography>
+
+
+                        <Typography
+                            sx={{
+                                fontSize:
+                                    "1rem",
+
+                                animation:
+                                    "partyPop 1.8s ease-in-out infinite",
+
+                                "@keyframes partyPop": {
+
+                                    "0%, 100%": {
+
+                                        transform:
+                                            "scale(1)"
+                                    },
+
+                                    "50%": {
+
+                                        transform:
+                                            "scale(1.18) rotate(8deg)"
+                                    }
+                                }
+                            }}
+                        >
+                            🎉
+                        </Typography>
+
+                    </Box>
+
+
+                    <Typography
+                        sx={{
+                            mt:
+                                0.3,
+
+                            fontSize:
+                                "0.68rem",
+
+                            color:
+                                "text.secondary"
+                        }}
+                    >
+                        Wishing you a wonderful day!
+                    </Typography>
+
+                </Box>
+
+
+                <Typography
+                    sx={{
+                        display: {
+                            xs: "none",
+
+                            sm: "block"
+                        },
+
+                        fontSize:
+                            "0.9rem",
+
+                        animation:
+                            "sparkle 2s ease-in-out infinite",
+
+                        "@keyframes sparkle": {
+
+                            "0%, 100%": {
+
+                                opacity:
+                                    0.25,
+
+                                transform:
+                                    "scale(0.8)"
+                            },
+
+                            "50%": {
+
+                                opacity:
+                                    1,
+
+                                transform:
+                                    "scale(1.15)"
+                            }
+                        }
+                    }}
+                >
+                    ✨
+                </Typography>
+
+            </Box>
+
+        </Box>
+
+    );
+
+}
+
+
+// ============================================================
+// BIRTHDAY EMPLOYEE WRAPPER
+// ============================================================
+
+function BirthdayEmployeeWrapper({
+    employee,
+    isActive,
+    panelLocked,
+    activeDepartment,
+    sending,
+    onSend,
+    onMouseEnter,
+    onMouseLeave,
+    onClick,
+    onBack
+}) {
+
+    return (
+
+        <Box
+            data-birthday-interactive="true"
+
+            onMouseEnter={
+                onMouseEnter
+            }
+
+            onMouseLeave={
+                onMouseLeave
+            }
+
+            sx={{
+                position:
+                    "relative",
+
+                width:
+                    "100%",
+
+                height:
+                    128,
+
+                overflow:
+                    "visible"
+            }}
+        >
+
+            <BirthdayEmployee
+                employee={
+                    employee
+                }
+
+                sending={
+                    sending
+                }
+
+                onSend={
+                    onSend
+                }
+
+                active={
+                    isActive
+                }
+
+                onClick={
+                    onClick
+                }
+
+            />
+
+
+            {/* =================================================
+                DEPARTMENT OVERLAY
+            ================================================= */}
+
+            {isActive &&
+                activeDepartment && (
+
+                    <DepartmentDetailCard
+                        employee={
+                            employee
+                        }
+
+                        department={
+                            activeDepartment
+                        }
+
+                        locked={
+                            panelLocked
+                        }
+
+                        sending={
+                            sending
+                        }
+
+                        onSend={
+                            onSend
+                        }
+
+                        onBack={
+                            onBack
+                        }
+
+                    />
+
+                )}
+
+        </Box>
+
+    );
+
+}
+
+
+// ============================================================
 // BIRTHDAY EMPLOYEE CARD
 // ============================================================
 
 function BirthdayEmployee({
-    employee
+    employee,
+    sending,
+    onSend,
+    active,
+    onClick
 }) {
 
     return (
 
         <Paper
             elevation={0}
+
+            onClick={
+                onClick
+            }
+
             sx={{
-                p: 2.5,
+                position:
+                    "absolute",
 
-                height: "100%",
+                inset:
+                    0,
 
-                borderRadius: 3,
+                zIndex:
+                    active
+                        ? 1
+                        : 2,
+
+                p:
+                    1.75,
+
+                height:
+                    128,
+
+                boxSizing:
+                    "border-box",
+
+                borderRadius:
+                    2.5,
 
                 border:
-                    "1px solid #FED7AA",
+                    "1px solid",
 
-                background:
-                    "linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%)",
+                borderColor:
+                    active
+                        ? "rgba(5, 150, 105, 0.45)"
+                        : "rgba(5, 150, 105, 0.20)",
 
-                position:
-                    "relative",
+                backgroundColor:
+                    active
+                        ? "rgba(5, 150, 105, 0.09)"
+                        : "rgba(5, 150, 105, 0.055)",
+
+                backdropFilter:
+                    "blur(12px)",
+
+                WebkitBackdropFilter:
+                    "blur(12px)",
+
+                cursor:
+                    "pointer",
 
                 overflow:
                     "hidden",
 
                 transition:
-                    "all 0.25s ease",
+                    "all 0.22s ease",
 
                 "&:hover": {
 
                     transform:
-                        "translateY(-5px)",
-
-                    boxShadow:
-                        "0 12px 30px rgba(234,88,12,0.12)",
+                        "translateY(-2px)",
 
                     borderColor:
-                        "#FDBA74"
+                        "rgba(5, 150, 105, 0.42)",
+
+                    backgroundColor:
+                        "rgba(5, 150, 105, 0.10)",
+
+                    boxShadow:
+                        "0 8px 22px rgba(5, 150, 105, 0.10)"
                 },
 
                 "&::after": {
 
-                    content: '""',
+                    content:
+                        '""',
 
                     position:
                         "absolute",
 
-                    width: 80,
-                    height: 80,
+                    width:
+                        65,
+
+                    height:
+                        65,
 
                     borderRadius:
                         "50%",
 
                     backgroundColor:
-                        "rgba(234,88,12,0.06)",
+                        "rgba(5, 150, 105, 0.06)",
 
-                    right: -25,
-                    bottom: -25,
+                    right:
+                        -20,
+
+                    bottom:
+                        -20,
 
                     pointerEvents:
                         "none"
@@ -603,32 +1888,50 @@ function BirthdayEmployee({
                     position:
                         "relative",
 
-                    zIndex: 1
+                    zIndex:
+                        1
                 }}
             >
 
-                {/* HEADER */}
+                {/* =================================================
+                    EMPLOYEE HEADER
+                ================================================= */}
 
                 <Box
                     sx={{
-                        display: "flex",
+                        display:
+                            "flex",
 
                         alignItems:
                             "center",
 
-                        gap: 2
+                        gap:
+                            1.25
                     }}
                 >
 
                     <Avatar
                         sx={{
-                            background:
-                                "#FFF7ED",
+                            width:
+                                38,
+
+                            height:
+                                38,
+
+                            flexShrink:
+                                0,
+
+                            backgroundColor:
+                                "rgba(234, 88, 12, 0.11)",
 
                             color:
-                                "#EA580C",
+                                birthdayColors.primary,
 
-                            fontWeight: 700
+                            fontWeight:
+                                700,
+
+                            fontSize:
+                                "0.85rem"
                         }}
                     >
                         {employee.name
@@ -639,16 +1942,21 @@ function BirthdayEmployee({
 
                     <Box
                         sx={{
-                            minWidth: 0
+                            minWidth:
+                                0
                         }}
                     >
 
                         <Typography
                             sx={{
-                                fontWeight: 700,
+                                fontWeight:
+                                    700,
+
+                                fontSize:
+                                    "0.88rem",
 
                                 color:
-                                    "#1E293B",
+                                    "text.primary",
 
                                 overflow:
                                     "hidden",
@@ -665,10 +1973,15 @@ function BirthdayEmployee({
 
 
                         <Typography
-                            variant="body2"
                             sx={{
                                 color:
-                                    "#64748B"
+                                    "text.secondary",
+
+                                fontSize:
+                                    "0.70rem",
+
+                                mt:
+                                    0.2
                             }}
                         >
                             {employee.employee_id}
@@ -679,47 +1992,226 @@ function BirthdayEmployee({
                 </Box>
 
 
-                {/* EMAIL */}
+                {/* =================================================
+                    EMAIL
+                ================================================= */}
 
                 <Typography
-                    variant="body2"
                     sx={{
-                        mt: 2,
+                        mt:
+                            1,
+
+                        fontSize:
+                            "0.70rem",
 
                         color:
-                            "#475569",
+                            "text.secondary",
 
-                        overflowWrap:
-                            "anywhere"
+                        overflow:
+                            "hidden",
+
+                        textOverflow:
+                            "ellipsis",
+
+                        whiteSpace:
+                            "nowrap"
                     }}
                 >
                     {employee.email}
                 </Typography>
 
 
-                {/* DEPARTMENT */}
+                {/* =================================================
+                    BOTTOM
+                ================================================= */}
 
-                <Chip
-                    icon={
-                        <BusinessIcon />
-                    }
-
-                    label={
-                        employee.department
-                    }
-
-                    size="small"
-
+                <Box
                     sx={{
-                        mt: 1.5,
+                        mt:
+                            0.8,
 
-                        color:
-                            "#C2410C",
+                        display:
+                            "flex",
 
-                        background:
-                            "#FFF7ED"
+                        justifyContent:
+                            "space-between",
+
+                        alignItems:
+                            "center",
+
+                        gap:
+                            1
                     }}
-                />
+                >
+
+                    <Chip
+                        icon={
+                            <BusinessIcon
+                                sx={{
+                                    fontSize:
+                                        "15px !important"
+                                }}
+                            />
+                        }
+
+                        label={
+                            employee.department ||
+                            "No Department"
+                        }
+
+                        size="small"
+
+                        sx={{
+                            maxWidth:
+                                "70%",
+
+                            height:
+                                24,
+
+                            color:
+                                "#047857",
+
+                            backgroundColor:
+                                "rgba(5, 150, 105, 0.08)",
+
+                            border:
+                                "1px solid rgba(5, 150, 105, 0.12)",
+
+                            "& .MuiChip-label": {
+
+                                overflow:
+                                    "hidden",
+
+                                textOverflow:
+                                    "ellipsis",
+
+                                whiteSpace:
+                                    "nowrap",
+
+                                fontSize:
+                                    "0.66rem"
+                            }
+                        }}
+                    />
+
+
+                    {/* =================================================
+                        SEND STATUS
+                    ================================================= */}
+
+                    {employee.wishes_sent ? (
+
+                        <Chip
+                            icon={
+                                <CheckCircleIcon
+                                    sx={{
+                                        fontSize:
+                                            "15px !important"
+                                    }}
+                                />
+                            }
+
+                            label="Sent"
+
+                            size="small"
+
+                            sx={{
+                                height:
+                                    24,
+
+                                fontWeight:
+                                    700,
+
+                                fontSize:
+                                    "0.66rem",
+
+                                color:
+                                    "success.main",
+
+                                backgroundColor:
+                                    "rgba(16, 185, 129, 0.10)"
+                            }}
+                        />
+
+                    ) : (
+
+                        <Button
+                            variant="contained"
+
+                            size="small"
+
+                            startIcon={
+                                sending
+                                    ? (
+                                        <CircularProgress
+                                            size={13}
+                                            color="inherit"
+                                        />
+                                    )
+                                    : (
+                                        <SendIcon
+                                            sx={{
+                                                fontSize:
+                                                    "15px !important"
+                                            }}
+                                        />
+                                    )
+                            }
+
+                            disabled={
+                                sending
+                            }
+
+                            onClick={(event) => {
+
+                                event.stopPropagation();
+
+                                onSend(
+                                    employee
+                                );
+
+                            }}
+
+                            sx={{
+                                minWidth:
+                                    0,
+
+                                px:
+                                    1.1,
+
+                                py:
+                                    0.45,
+
+                                textTransform:
+                                    "none",
+
+                                fontWeight:
+                                    700,
+
+                                fontSize:
+                                    "0.66rem",
+
+                                borderRadius:
+                                    1.5,
+
+                                backgroundColor:
+                                    "#059669",
+
+                                "&:hover": {
+
+                                    backgroundColor:
+                                        "#047857"
+                                }
+                            }}
+                        >
+                            {sending
+                                ? "Sending"
+                                : "Send Wishes"}
+                        </Button>
+
+                    )}
+
+                </Box>
 
             </Box>
 
@@ -731,147 +2223,135 @@ function BirthdayEmployee({
 
 
 // ============================================================
-// DEPARTMENT CARD
+// DEPARTMENT DETAIL OVERLAY
 // ============================================================
 
-function DepartmentCard({
-    department
+function DepartmentDetailCard({
+    employee,
+    department,
+    locked,
+    sending,
+    onSend,
+    onBack
 }) {
 
-    const status =
-        statusStyle(
-            department.status
-        );
-
-
-    // ========================================================
-    // DEPARTMENT COLORS
-    // ========================================================
-
-    const departmentColors = [
-
-        {
-            color: "#2563EB",
-            lightColor: "#EFF6FF"
-        },
-
-        {
-            color: "#7C3AED",
-            lightColor: "#F5F3FF"
-        },
-
-        {
-            color: "#059669",
-            lightColor: "#ECFDF5"
-        },
-
-        {
-            color: "#EA580C",
-            lightColor: "#FFF7ED"
-        },
-
-        {
-            color: "#0891B2",
-            lightColor: "#ECFEFF"
-        },
-
-        {
-            color: "#DB2777",
-            lightColor: "#FDF2F8"
-        }
-
-    ];
-
-
-    // ========================================================
-    // CREATE STABLE COLOR
-    // ========================================================
-
-    const departmentIndex =
-        department.department
-            ?.split("")
-            .reduce(
-                (sum, char) =>
-                    sum +
-                    char.charCodeAt(0),
-                0
-            ) %
-        departmentColors.length;
-
-
     const config =
-        departmentColors[
-            departmentIndex
-        ] ||
-        departmentColors[0];
+        getDepartmentConfig(
+            department.department
+        );
 
 
     return (
 
         <Paper
             elevation={0}
+
+            data-birthday-interactive="true"
+
             sx={{
-                height: "100%",
+                position:
+                    "absolute",
 
-                minHeight: 250,
+                inset:
+                    0,
 
-                p: 2.5,
+                zIndex:
+                    20,
 
-                borderRadius: 3,
+                width:
+                    "100%",
+
+                height:
+                    128,
+
+                boxSizing:
+                    "border-box",
+
+                p:
+                    1.4,
+
+                borderRadius:
+                    2.5,
 
                 border:
-                    `1px solid ${config.color}20`,
+                    "1px solid",
 
-                background: `
-                    linear-gradient(
-                        135deg,
-                        ${config.lightColor} 0%,
-                        #f9eaea 100%
-                    )
-                `,
+                borderColor:
+                    `${config.color}55`,
 
-                position:
-                    "relative",
+                /*
+                 * Opaque background so the birthday
+                 * card underneath is not visible.
+                 */
+
+                backgroundColor:
+                    (theme) =>
+                        theme.palette.mode === "dark"
+                            ? "rgba(15, 23, 42, 0.985)"
+                            : "rgba(255, 255, 255, 0.985)",
+
+                backdropFilter:
+                    "blur(22px)",
+
+                WebkitBackdropFilter:
+                    "blur(22px)",
+
+                boxShadow:
+                    "0 12px 30px rgba(15, 23, 42, 0.18)",
 
                 overflow:
                     "hidden",
 
-                transition:
-                    "all 0.25s ease",
+                animation:
+                    "birthdayDepartmentIn 0.16s ease",
 
-                "&:hover": {
+                "@keyframes birthdayDepartmentIn": {
 
-                    transform:
-                        "translateY(-5px)",
+                    from: {
 
-                    boxShadow:
-                        `0 12px 30px ${config.color}25`,
+                        opacity:
+                            0,
 
-                    borderColor:
-                        `${config.color}50`
+                        transform:
+                            "scale(0.97)"
+                    },
+
+                    to: {
+
+                        opacity:
+                            1,
+
+                        transform:
+                            "scale(1)"
+                    }
                 },
 
-                "&::after": {
+                "&::before": {
 
-                    content: '""',
+                    content:
+                        '""',
 
                     position:
                         "absolute",
 
-                    width: 110,
-                    height: 110,
+                    top:
+                        0,
 
-                    borderRadius:
-                        "50%",
+                    left:
+                        0,
 
-                    backgroundColor:
-                        `${config.color}10`,
+                    width:
+                        "100%",
 
-                    right: -35,
-                    bottom: -40,
+                    height:
+                        3,
 
-                    pointerEvents:
-                        "none"
+                    background:
+                        `linear-gradient(
+                            90deg,
+                            ${config.color},
+                            transparent
+                        )`
                 }
             }}
         >
@@ -881,7 +2361,17 @@ function DepartmentCard({
                     position:
                         "relative",
 
-                    zIndex: 1
+                    zIndex:
+                        1,
+
+                    height:
+                        "100%",
+
+                    display:
+                        "flex",
+
+                    flexDirection:
+                        "column"
                 }}
             >
 
@@ -891,315 +2381,365 @@ function DepartmentCard({
 
                 <Box
                     sx={{
-                        display: "flex",
-
-                        justifyContent:
-                            "space-between",
+                        display:
+                            "flex",
 
                         alignItems:
                             "center",
 
-                        gap: 2,
+                        justifyContent:
+                            "space-between",
 
-                        mb: 2
+                        gap:
+                            1,
+
+                        mb:
+                            0.7
                     }}
                 >
 
-                    {/* DEPARTMENT */}
-
                     <Box
                         sx={{
-                            display: "flex",
+                            display:
+                                "flex",
 
                             alignItems:
                                 "center",
 
-                            gap: 1.5,
+                            gap:
+                                0.8,
 
-                            minWidth: 0
+                            minWidth:
+                                0
                         }}
                     >
 
-                        <Box
+                        <PeopleIcon
                             sx={{
-                                width: 42,
-                                height: 42,
-
-                                flexShrink: 1,
-
-                                borderRadius: 2,
-
-                                display: "flex",
-
-                                alignItems:
-                                    "center",
-
-                                justifyContent:
-                                    "center",
-
-                                backgroundColor:
-                                    `${config.color}15`,
+                                fontSize:
+                                    18,
 
                                 color:
-                                    config.color
+                                    config.color,
+
+                                flexShrink:
+                                    0
                             }}
-                        >
-
-                            <PeopleIcon />
-
-                        </Box>
+                        />
 
 
-                        <Box
+                        <Typography
                             sx={{
-                                minWidth: 0
+                                fontSize:
+                                    "0.82rem",
+
+                                fontWeight:
+                                    700,
+
+                                color:
+                                    "text.primary",
+
+                                overflow:
+                                    "hidden",
+
+                                textOverflow:
+                                    "ellipsis",
+
+                                whiteSpace:
+                                    "nowrap"
                             }}
                         >
-
-                            <Typography
-                                sx={{
-                                    fontSize:
-                                        "0.95rem",
-
-                                    fontWeight: 700,
-
-                                    color:
-                                        "#1E293B",
-
-                                    overflow:
-                                        "hidden",
-
-                                    textOverflow:
-                                        "ellipsis",
-
-                                    whiteSpace:
-                                        "nowrap"
-                                }}
-                            >
-                                {department.department}
-                            </Typography>
-
-
-                            <Typography
-                                sx={{
-                                    fontSize:
-                                        "0.72rem",
-
-                                    color:
-                                        "#64748B",
-
-                                    mt: 0.3
-                                }}
-                            >
-                                Department
-                            </Typography>
-
-                        </Box>
+                            {department.department}
+                        </Typography>
 
                     </Box>
 
 
-                    {/* STATUS */}
+                    {locked && (
 
-                    <Chip
-                        label={
-                            department.status
+                        <Button
+                            size="small"
+
+                            startIcon={
+                                <ArrowBackIcon
+                                    sx={{
+                                        fontSize:
+                                            "14px !important"
+                                    }}
+                                />
+                            }
+
+                            onClick={(event) => {
+
+                                event.stopPropagation();
+
+                                onBack();
+
+                            }}
+
+                            sx={{
+                                minWidth:
+                                    "auto",
+
+                                px:
+                                    0.8,
+
+                                py:
+                                    0.25,
+
+                                borderRadius:
+                                    1.2,
+
+                                color:
+                                    "text.secondary",
+
+                                fontSize:
+                                    "0.63rem",
+
+                                fontWeight:
+                                    600,
+
+                                textTransform:
+                                    "none",
+
+                                "&:hover": {
+
+                                    color:
+                                        "primary.main",
+
+                                    backgroundColor:
+                                        "rgba(37, 99, 235, 0.08)"
+                                }
+                            }}
+                        >
+                            Back
+                        </Button>
+
+                    )}
+
+                </Box>
+
+
+                <Divider
+                    sx={{
+                        mb:
+                            0.7
+                    }}
+                />
+
+
+                {/* =================================================
+                    DETAILS
+                ================================================= */}
+
+                <Box
+                    sx={{
+                        display:
+                            "grid",
+
+                        gridTemplateColumns:
+                            "1.25fr 1fr 1fr 1fr",
+
+                        gap:
+                            0.65
+                    }}
+                >
+
+                    <CompactDepartmentInfo
+                        label="Birthday"
+                        value={
+                            employee.name
                         }
+                        color={
+                            birthdayColors.primary
+                        }
+                    />
 
-                        size="small"
 
-                        sx={{
-                            flexShrink: 0,
+                    <CompactDepartmentInfo
+                        label="People"
+                        value={
+                            department.announcement_recipients
+                        }
+                        color={
+                            "#2563EB"
+                        }
+                    />
 
-                            fontWeight: 700,
 
-                            fontSize:
-                                "0.7rem",
+                    <CompactDepartmentInfo
+                        label="Sent"
+                        value={
+                            department.sent
+                        }
+                        color={
+                            "#059669"
+                        }
+                    />
 
-                            color:
-                                status.color,
 
-                            backgroundColor:
-                                status.background,
-
-                            border:
-                                `1px solid ${status.color}20`
-                        }}
+                    <CompactDepartmentInfo
+                        label="Failed"
+                        value={
+                            department.failed
+                        }
+                        color={
+                            "#DC2626"
+                        }
                     />
 
                 </Box>
 
 
                 {/* =================================================
-                    DIVIDER
+                    BOTTOM ACTION AREA
                 ================================================= */}
 
-                <Divider
+                <Box
                     sx={{
-                        mb: 2,
+                        mt:
+                            "auto",
 
-                        borderColor:
-                            `${config.color}15`
+                        display:
+                            "flex",
+
+                        alignItems:
+                            "center",
+
+                        justifyContent:
+                            "space-between",
+
+                        gap:
+                            1
                     }}
-                />
-
-
-                {/* =================================================
-                    STATISTICS
-                ================================================= */}
-
-                <Grid
-                    container
-                    spacing={1.5}
                 >
 
-                    <DepartmentStat
-                        title="Birthdays"
+                    {/* STATUS */}
 
-                        value={
-                            department.birthday_count
+                    <DepartmentStatusChip
+                        status={
+                            department.status
                         }
-
-                        color="#EA580C"
-
-                        background="#f8dcbb"
                     />
 
 
-                    <DepartmentStat
-                        title="Recipients"
+                    {/* =================================================
+                        SEND WISHES
+                    ================================================= */}
 
-                        value={
-                            department.announcement_recipients
-                        }
+                    {employee.wishes_sent ? (
 
-                        color="#7C3AED"
+                        <Chip
+                            icon={
+                                <CheckCircleIcon
+                                    sx={{
+                                        fontSize:
+                                            "15px !important"
+                                    }}
+                                />
+                            }
 
-                        background="#d2caf7"
-                    />
+                            label="Sent"
 
+                            size="small"
 
-                    <DepartmentStat
-                        title="Sent"
-
-                        value={
-                            department.sent
-                        }
-
-                        color="#059669"
-
-                        background="#cef3e1"
-                    />
-
-
-                    <DepartmentStat
-                        title="Failed"
-
-                        value={
-                            department.failed
-                        }
-
-                        color="#DC2626"
-
-                        background="#f0c5c5"
-                    />
-
-                </Grid>
-
-
-                {/* =================================================
-                    BIRTHDAY EMPLOYEES
-                ================================================= */}
-
-                {department.birthdays?.length > 0 && (
-
-                    <Box
-                        sx={{
-                            mt: 2,
-
-                            p: 1.5,
-
-                            borderRadius: 2,
-
-                            background:
-                                `${config.color}08`,
-
-                            border:
-                                `1px solid ${config.color}12`
-                        }}
-                    >
-
-                        <Typography
-                            variant="caption"
                             sx={{
-                                fontWeight: 700,
+                                height:
+                                    24,
+
+                                fontWeight:
+                                    700,
+
+                                fontSize:
+                                    "0.66rem",
 
                                 color:
-                                    "#4f607a",
+                                    "success.main",
 
-                                display:
-                                    "block",
+                                backgroundColor:
+                                    "rgba(16, 185, 129, 0.10)"
+                            }}
+                        />
 
-                                mb: 1
+                    ) : (
+
+                        <Button
+                            variant="contained"
+
+                            size="small"
+
+                            startIcon={
+                                sending
+                                    ? (
+                                        <CircularProgress
+                                            size={13}
+                                            color="inherit"
+                                        />
+                                    )
+                                    : (
+                                        <SendIcon
+                                            sx={{
+                                                fontSize:
+                                                    "15px !important"
+                                            }}
+                                        />
+                                    )
+                            }
+
+                            disabled={
+                                sending
+                            }
+
+                            onClick={(event) => {
+
+                                event.stopPropagation();
+
+                                onSend(
+                                    employee
+                                );
+
+                            }}
+
+                            sx={{
+                                minWidth:
+                                    0,
+
+                                px:
+                                    1.1,
+
+                                py:
+                                    0.45,
+
+                                borderRadius:
+                                    1.5,
+
+                                textTransform:
+                                    "none",
+
+                                fontWeight:
+                                    700,
+
+                                fontSize:
+                                    "0.66rem",
+
+                                backgroundColor:
+                                    "#059669",
+
+                                "&:hover": {
+
+                                    backgroundColor:
+                                        "#047857"
+                                }
                             }}
                         >
-                            Birthday Employees
-                        </Typography>
+                            {sending
+                                ? "Sending"
+                                : "Send Wishes"}
+                        </Button>
 
+                    )}
 
-                        {department.birthdays.map(
-                            (employee) => (
-
-                                <Box
-                                    key={
-                                        employee.id
-                                    }
-
-                                    sx={{
-                                        display:
-                                            "flex",
-
-                                        alignItems:
-                                            "center",
-
-                                        gap: 1,
-
-                                        mt: 0.7
-                                    }}
-                                >
-
-                                    <CakeIcon
-                                        sx={{
-                                            fontSize:
-                                                17,
-
-                                            color:
-                                                "#EA580C"
-                                        }}
-                                    />
-
-
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            color:
-                                                "#475569",
-
-                                            fontWeight:
-                                                500
-                                        }}
-                                    >
-                                        {employee.name}
-                                    </Typography>
-
-                                </Box>
-
-                            )
-                        )}
-
-                    </Box>
-
-                )}
+                </Box>
 
             </Box>
 
@@ -1211,76 +2751,131 @@ function DepartmentCard({
 
 
 // ============================================================
-// DEPARTMENT STAT
+// COMPACT DEPARTMENT INFO
 // ============================================================
 
-function DepartmentStat({
-    title,
+function CompactDepartmentInfo({
+    label,
     value,
-    color,
-    background
+    color
 }) {
 
     return (
 
-        <Grid
-            size={{
-                xs: 6
+        <Box
+            sx={{
+                minWidth:
+                    0,
+
+                px:
+                    0.75,
+
+                py:
+                    0.45,
+
+                borderRadius:
+                    1.2,
+
+                backgroundColor:
+                    `${color}08`,
+
+                border:
+                    `1px solid ${color}12`
             }}
         >
 
-            <Box
+            <Typography
                 sx={{
-                    p: 1.5,
+                    fontSize:
+                        "0.56rem",
 
-                    borderRadius: 2,
+                    color:
+                        "text.secondary",
 
-                    background,
+                    lineHeight:
+                        1.1,
 
-                    transition:
-                        "all 0.2s ease",
-
-                    "&:hover": {
-
-                        transform:
-                            "translateY(-2px)"
-                    }
+                    mb:
+                        0.2
                 }}
             >
-
-                <Typography
-                    sx={{
-                        fontSize:
-                            "0.72rem",
-
-                        fontWeight: 500,
-
-                        color:
-                            "#5b697d"
-                    }}
-                >
-                    {title}
-                </Typography>
+                {label}
+            </Typography>
 
 
-                <Typography
-                    sx={{
-                        mt: 0.3,
+            <Typography
+                sx={{
+                    fontSize:
+                        "0.64rem",
 
-                        fontSize:
-                            "1.25rem",
+                    fontWeight:
+                        700,
 
-                        fontWeight: 700,
+                    color:
+                        "text.primary",
 
-                        color
-                    }}
-                >
-                    {value}
-                </Typography>
+                    overflow:
+                        "hidden",
 
-            </Box>
+                    textOverflow:
+                        "ellipsis",
 
-        </Grid>
+                    whiteSpace:
+                        "nowrap"
+                }}
+            >
+                {value}
+            </Typography>
+
+        </Box>
+
+    );
+
+}
+
+
+// ============================================================
+// DEPARTMENT STATUS
+// ============================================================
+
+function DepartmentStatusChip({
+    status
+}) {
+
+    return (
+
+        <Chip
+            label={
+                status
+            }
+
+            size="small"
+
+            sx={{
+                height:
+                    20,
+
+                fontSize:
+                    "0.58rem",
+
+                fontWeight:
+                    700,
+
+                color:
+                    (theme) =>
+                        statusStyle(
+                            status,
+                            theme.palette.mode
+                        ).color,
+
+                backgroundColor:
+                    (theme) =>
+                        statusStyle(
+                            status,
+                            theme.palette.mode
+                        ).background
+            }}
+        />
 
     );
 
@@ -1305,65 +2900,67 @@ function JobCard({
 
         <Paper
             elevation={0}
-            sx={{
-                p: 2.5,
 
-                borderRadius: 3,
+            sx={{
+                p:
+                    1.75,
+
+                borderRadius:
+                    2.5,
 
                 border:
-                    "1px solid #E2E8F0",
+                    "1px solid",
 
-                background:
-                    "linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%)",
+                borderColor:
+                    "divider",
 
-                position:
-                    "relative",
-
-                overflow:
-                    "hidden",
-
-                transition:
-                    "all 0.25s ease",
-
-                "&:hover": {
-
-                    transform:
-                        "translateY(-4px)",
-
-                    boxShadow:
-                        "0 10px 25px rgba(37,99,235,0.10)"
-                }
+                backgroundColor:
+                    "rgba(37, 99, 235, 0.05)"
             }}
         >
 
             <Grid
                 container
-                spacing={2}
+                spacing={1.5}
             >
 
                 <JobStat
                     title="Job ID"
-                    value={`#${job.id}`}
+
+                    value={
+                        `#${job.id}`
+                    }
                 />
 
 
                 <JobStat
                     title="Total"
-                    value={job.total}
+
+                    value={
+                        job.total
+                    }
                 />
 
 
                 <JobStat
                     title="Sent"
-                    value={job.sent}
-                    color="#059669"
+
+                    value={
+                        job.sent
+                    }
                 />
 
 
                 <JobStat
                     title="Failed"
-                    value={job.failed}
-                    color="#DC2626"
+
+                    value={
+                        job.failed
+                    }
+
+                    color={
+                        "#DC2626"
+                    }
                 />
 
             </Grid>
@@ -1371,7 +2968,8 @@ function JobCard({
 
             <Divider
                 sx={{
-                    my: 2
+                    my:
+                        1.5
                 }}
             />
 
@@ -1387,13 +2985,19 @@ function JobCard({
                     job.status
                 }
 
+                size="small"
+
                 sx={{
-                    fontWeight: 700,
+                    height:
+                        26,
+
+                    fontWeight:
+                        700,
 
                     color:
                         style.color,
 
-                    background:
+                    backgroundColor:
                         style.background
                 }}
             />
@@ -1412,7 +3016,7 @@ function JobCard({
 function JobStat({
     title,
     value,
-    color = "#1E293B"
+    color = "text.primary"
 }) {
 
     return (
@@ -1420,15 +3024,18 @@ function JobStat({
         <Grid
             size={{
                 xs: 6,
+
                 sm: 3
             }}
         >
 
             <Typography
-                variant="caption"
                 sx={{
+                    fontSize:
+                        "0.65rem",
+
                     color:
-                        "#64748B"
+                        "text.secondary"
                 }}
             >
                 {title}
@@ -1438,9 +3045,10 @@ function JobStat({
             <Typography
                 sx={{
                     fontSize:
-                        "1.35rem",
+                        "1.15rem",
 
-                    fontWeight: 700,
+                    fontWeight:
+                        700,
 
                     color
                 }}

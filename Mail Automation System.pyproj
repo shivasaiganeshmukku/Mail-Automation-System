@@ -62,6 +62,8 @@
     <Compile Include="backend\app\__init__.py" />
     <Compile Include="backend\app\config.py" />
     <Compile Include="backend\app\database.py" />
+    <Compile Include="backend\setup.py" />
+    <Compile Include="backend\setup_database.py" />
     <Compile Include="backend\test_birthday_scheduler.py" />
   </ItemGroup>
   <ItemGroup>

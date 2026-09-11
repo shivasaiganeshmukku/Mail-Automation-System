@@ -8,13 +8,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 import EmailTemplateService from "../../services/emailTemplateService";
 import EmailTemplateDialog from "../../components/EmailTemplateDialog";
@@ -24,8 +26,11 @@ import DeleteTemplateDialog from "../../components/DeleteTemplateDialog";
 function EmailTemplates() {
 
     const [templates, setTemplates] = useState([]);
+
     const [open, setOpen] = useState(false);
+
     const [editingTemplate, setEditingTemplate] = useState(null);
+
     const [deletingTemplate, setDeletingTemplate] = useState(null);
 
 
@@ -125,7 +130,6 @@ function EmailTemplates() {
 
         }
 
-
         EmailTemplateService.deleteTemplate(
             deletingTemplate.id
         )
@@ -154,7 +158,6 @@ function EmailTemplates() {
                     error
                 );
 
-
                 if (error.response) {
 
                     alert(
@@ -167,7 +170,8 @@ function EmailTemplates() {
                 } else {
 
                     alert(
-                        "Error deleting template. Check the backend."
+                        "Error deleting template. " +
+                        "Check the backend."
                     );
 
                 }
@@ -200,15 +204,6 @@ function EmailTemplates() {
             sx={{
                 width: "100%",
                 minHeight: "calc(100vh - 120px)",
-
-                // PAGE BACKGROUND
-                backgroundColor: "#c4d7f8",
-
-                borderRadius: "14px",
-
-                p:1,
-
-                pb: 4,
             }}
         >
 
@@ -239,91 +234,141 @@ function EmailTemplates() {
                 }}
             >
 
-                {/* PAGE TITLE */}
+                {/* ==================================================
+                    TITLE
+                ================================================== */}
 
                 <Box>
 
-                    <Typography
+                    <Box
                         sx={{
-                            fontSize: {
-                                xs: "1.7rem",
-                                sm: "2rem",
-                            },
+                            display: "flex",
 
-                            fontWeight: 750,
+                            alignItems: "center",
 
-                            color: "#172554",
-
-                            lineHeight: 1.2,
+                            gap: 1.5,
                         }}
                     >
-                        Email Templates
-                    </Typography>
+
+                        <Box
+                            sx={{
+                                width: 44,
+                                height: 44,
+
+                                borderRadius: "13px",
+
+                                display: "flex",
+
+                                alignItems: "center",
+
+                                justifyContent: "center",
+
+                                background:
+                                    "linear-gradient(135deg, #7C3AED, #4F46E5)",
+
+                                color: "#FFFFFF",
+
+                                boxShadow:
+                                    "0 8px 22px rgba(124, 58, 237, 0.24)",
+
+                                flexShrink: 0,
+                            }}
+                        >
+
+                            <DescriptionIcon />
+
+                        </Box>
 
 
-                    <Typography
-                        sx={{
-                            mt: 0.6,
+                        <Box>
 
-                            fontSize: "0.88rem",
+                            <Typography
+                                sx={{
+                                    fontSize: {
+                                        xs: "1.45rem",
+                                        sm: "1.7rem",
+                                    },
 
-                            color: "#475b78",
-                        }}
-                    >
-                        Create and manage reusable email templates
-                    </Typography>
+                                    fontWeight: 750,
+
+                                    color:
+                                        "text.primary",
+
+                                    lineHeight: 1.2,
+                                }}
+                            >
+                                Email Templates
+                            </Typography>
+
+
+                            <Typography
+                                sx={{
+                                    mt: 0.5,
+
+                                    fontSize:
+                                        "0.85rem",
+
+                                    color:
+                                        "text.secondary",
+                                }}
+                            >
+                                Create and manage reusable email templates
+                            </Typography>
+
+                        </Box>
+
+                    </Box>
 
                 </Box>
 
 
-                {/* ADD TEMPLATE BUTTON */}
+                {/* ==================================================
+                    ADD TEMPLATE
+                ================================================== */}
 
-                <Button
-                    variant="contained"
+                <Tooltip title="Add email template">
 
-                    startIcon={
-                        <AddIcon />
-                    }
+                    <IconButton
+                        onClick={handleOpen}
 
-                    onClick={
-                        handleOpen
-                    }
+                        sx={{
+                            width: 42,
+                            height: 42,
 
-                    sx={{
-                        minHeight: 44,
+                            borderRadius: "11px",
 
-                        px: 2.4,
-
-                        borderRadius: "11px",
-
-                        background:
-                            "linear-gradient(135deg, #2563EB, #4F46E5)",
-
-                        fontWeight: 650,
-
-                        textTransform: "none",
-
-                        boxShadow:
-                            "0 6px 16px rgba(37, 99, 235, 0.22)",
-
-                        transition:
-                            "all 0.2s ease",
-
-                        "&:hover": {
+                            color: "#FFFFFF",
 
                             background:
-                                "linear-gradient(135deg, #1D4ED8, #4338CA)",
-
-                            transform:
-                                "translateY(-2px)",
+                                "linear-gradient(135deg, #7C3AED, #4F46E5)",
 
                             boxShadow:
-                                "0 9px 20px rgba(37, 99, 235, 0.30)",
-                        },
-                    }}
-                >
-                    Add Template
-                </Button>
+                                "0 7px 18px rgba(124, 58, 237, 0.22)",
+
+                            "&:hover": {
+
+                                background:
+                                    "linear-gradient(135deg, #6D28D9, #4338CA)",
+
+                                transform:
+                                    "translateY(-1px)",
+
+                                boxShadow:
+                                    "0 10px 22px rgba(124, 58, 237, 0.30)",
+                            },
+
+                            transition:
+                                "all 0.2s ease",
+
+                            flexShrink: 0,
+                        }}
+                    >
+
+                        <AddIcon />
+
+                    </IconButton>
+
+                </Tooltip>
 
             </Box>
 
@@ -336,35 +381,41 @@ function EmailTemplates() {
                 elevation={0}
 
                 sx={{
-                    borderRadius: "18px",
+                    borderRadius: "16px",
 
-                    border:
-                        "1px solid #b0c8ea",
+                    border: "1px solid",
 
-                    // IMPORTANT:
-                    // NO PURE WHITE
+                    borderColor:
+                        "divider",
+
                     background:
-                        "linear-gradient(135deg, #E8F0FA 0%, #EDF2F7 100%)",
+                        "rgba(255, 255, 255, 0.035)",
+
+                    backdropFilter:
+                        "blur(16px)",
+
+                    WebkitBackdropFilter:
+                        "blur(16px)",
 
                     overflow: "hidden",
 
                     boxShadow:
-                        "0 8px 25px rgba(30, 64, 175, 0.08)",
+                        "0 10px 30px rgba(15, 23, 42, 0.08)",
                 }}
             >
 
                 {/* ==================================================
-                    TABLE TOP HEADER
+                    TABLE HEADER
                 ================================================== */}
 
                 <Box
                     sx={{
                         px: {
-                            xs: 2,
-                            sm: 2.5,
+                            xs: 1.8,
+                            sm: 2.2,
                         },
 
-                        py: 2,
+                        py: 1.45,
 
                         display: "flex",
 
@@ -373,11 +424,14 @@ function EmailTemplates() {
 
                         alignItems: "center",
 
-                        background:
-                            "linear-gradient(135deg, #DCE7FF 0%, #E7E1FF 100%)",
-
                         borderBottom:
-                            "1px solid #C5D3EA",
+                            "1px solid",
+
+                        borderColor:
+                            "divider",
+
+                        background:
+                            "rgba(124, 58, 237, 0.055)",
                     }}
                 >
 
@@ -385,11 +439,14 @@ function EmailTemplates() {
 
                         <Typography
                             sx={{
-                                fontSize: "1rem",
+                                fontSize:
+                                    "0.95rem",
 
-                                fontWeight: 700,
+                                fontWeight:
+                                    700,
 
-                                color: "#172554",
+                                color:
+                                    "text.primary",
                             }}
                         >
                             Email Templates
@@ -398,17 +455,21 @@ function EmailTemplates() {
 
                         <Typography
                             sx={{
-                                mt: 0.3,
+                                fontSize:
+                                    "0.72rem",
 
-                                fontSize: "0.75rem",
+                                color:
+                                    "text.secondary",
 
-                                color: "#64748B",
+                                mt: 0.25,
                             }}
                         >
+
                             {templates.length} template
                             {templates.length !== 1
                                 ? "s"
                                 : ""}
+
                         </Typography>
 
                     </Box>
@@ -416,35 +477,50 @@ function EmailTemplates() {
 
                     {/* RECORD COUNT */}
 
-                    <Box
+                    <Chip
+                        icon={
+                            <DescriptionIcon />
+                        }
+
+                        label={
+                            `${templates.length} Records`
+                        }
+
+                        size="small"
+
                         sx={{
-                            px: 1.5,
+                            height: 30,
 
-                            py: 0.7,
-
-                            borderRadius: "20px",
+                            color:
+                                "#A78BFA",
 
                             backgroundColor:
-                                "#D8E5FF",
+                                "rgba(124, 58, 237, 0.10)",
 
                             border:
-                                "1px solid #B9CEFA",
+                                "1px solid",
 
-                            color: "#2563EB",
+                            borderColor:
+                                "rgba(124, 58, 237, 0.22)",
 
-                            fontSize: "0.75rem",
+                            fontWeight:
+                                650,
 
-                            fontWeight: 700,
+                            "& .MuiChip-icon": {
+                                color:
+                                    "#A78BFA",
+
+                                fontSize:
+                                    17,
+                            },
                         }}
-                    >
-                        {templates.length} Records
-                    </Box>
+                    />
 
                 </Box>
 
 
                 {/* ==================================================
-                    SCROLLABLE TABLE
+                    TABLE
                 ================================================== */}
 
                 <TableContainer
@@ -453,29 +529,11 @@ function EmailTemplates() {
 
                         overflow: "auto",
 
+                        scrollbarWidth: "none",
+
                         "&::-webkit-scrollbar": {
-                            width: 8,
-                            height: 8,
+                            display: "none",
                         },
-
-                        "&::-webkit-scrollbar-track": {
-                            background: "#DCE5F0",
-                        },
-
-                        "&::-webkit-scrollbar-thumb": {
-                            background: "#9FB4D0",
-
-                            borderRadius: 10,
-                        },
-
-                        "&::-webkit-scrollbar-thumb:hover": {
-                            background: "#7F9BBC",
-                        },
-
-                        scrollbarWidth: "thin",
-
-                        scrollbarColor:
-                            "#9FB4D0 #DCE5F0",
                     }}
                 >
 
@@ -483,10 +541,12 @@ function EmailTemplates() {
                         stickyHeader
 
                         sx={{
-                            minWidth: 1000,
+                            minWidth: 950,
 
-                            backgroundColor:
-                                "#EAF1F8",
+                            "& .MuiTableCell-root": {
+                                borderColor:
+                                    "divider",
+                            },
                         }}
                     >
 
@@ -498,179 +558,58 @@ function EmailTemplates() {
 
                             <TableRow>
 
-                                {/* ID */}
+                                {[
+                                    ["ID", 70],
+                                    ["Template Name", 190],
+                                    ["Subject", 260],
+                                    ["Body", 390],
+                                    ["Actions", 120],
+                                ].map(([label, minWidth]) => (
 
-                                <TableCell
-                                    sx={{
-                                        minWidth: 70,
+                                    <TableCell
+                                        key={label}
 
-                                        position: "sticky",
+                                        sx={{
+                                            minWidth,
 
-                                        top: 0,
+                                            position:
+                                                "sticky",
 
-                                        zIndex: 5,
+                                            top: 0,
 
-                                        background:
-                                            "linear-gradient(135deg, #5B7CFA, #6366D9)",
+                                            zIndex: 5,
 
-                                        color: "#F8FAFC",
+                                            background:
+                                                "background.paper",
 
-                                        fontWeight: 700,
+                                            color:
+                                                "text.secondary",
 
-                                        fontSize: "0.75rem",
+                                            fontWeight:
+                                                750,
 
-                                        textTransform:
-                                            "uppercase",
+                                            fontSize:
+                                                "0.7rem",
 
-                                        letterSpacing:
-                                            "0.04em",
+                                            textTransform:
+                                                "uppercase",
 
-                                        borderBottom:
-                                            "1px solid #7D8EE8",
-                                    }}
-                                >
-                                    ID
-                                </TableCell>
+                                            letterSpacing:
+                                                "0.05em",
 
+                                            borderBottom:
+                                                "1px solid",
 
-                                {/* TEMPLATE NAME */}
+                                            borderColor:
+                                                "divider",
 
-                                <TableCell
-                                    sx={{
-                                        minWidth: 190,
+                                            py: 1.4,
+                                        }}
+                                    >
+                                        {label}
+                                    </TableCell>
 
-                                        position: "sticky",
-
-                                        top: 0,
-
-                                        zIndex: 5,
-
-                                        background:
-                                            "linear-gradient(135deg, #5B7CFA, #6366D9)",
-
-                                        color: "#F8FAFC",
-
-                                        fontWeight: 700,
-
-                                        fontSize: "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #7D8EE8",
-                                    }}
-                                >
-                                    Template Name
-                                </TableCell>
-
-
-                                {/* SUBJECT */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth: 260,
-
-                                        position: "sticky",
-
-                                        top: 0,
-
-                                        zIndex: 5,
-
-                                        background:
-                                            "linear-gradient(135deg, #5B7CFA, #6366D9)",
-
-                                        color: "#F8FAFC",
-
-                                        fontWeight: 700,
-
-                                        fontSize: "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #7D8EE8",
-                                    }}
-                                >
-                                    Subject
-                                </TableCell>
-
-
-                                {/* BODY */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth: 360,
-
-                                        position: "sticky",
-
-                                        top: 0,
-
-                                        zIndex: 5,
-
-                                        background:
-                                            "linear-gradient(135deg, #5B7CFA, #6366D9)",
-
-                                        color: "#F8FAFC",
-
-                                        fontWeight: 700,
-
-                                        fontSize: "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #7D8EE8",
-                                    }}
-                                >
-                                    Body
-                                </TableCell>
-
-
-                                {/* ACTIONS */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth: 210,
-
-                                        position: "sticky",
-
-                                        top: 0,
-
-                                        zIndex: 5,
-
-                                        background:
-                                            "linear-gradient(135deg, #5B7CFA, #6366D9)",
-
-                                        color: "#F8FAFC",
-
-                                        fontWeight: 700,
-
-                                        fontSize: "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #7D8EE8",
-                                    }}
-                                >
-                                    Actions
-                                </TableCell>
+                                ))}
 
                             </TableRow>
 
@@ -696,19 +635,51 @@ function EmailTemplates() {
                                             textAlign:
                                                 "center",
 
-                                            backgroundColor:
-                                                "#EAF1F8",
-
                                             borderBottom:
                                                 "none",
                                         }}
                                     >
 
+                                        <Box
+                                            sx={{
+                                                width: 52,
+                                                height: 52,
+
+                                                mx: "auto",
+                                                mb: 1.5,
+
+                                                borderRadius:
+                                                    "14px",
+
+                                                display:
+                                                    "flex",
+
+                                                alignItems:
+                                                    "center",
+
+                                                justifyContent:
+                                                    "center",
+
+                                                background:
+                                                    "rgba(124, 58, 237, 0.10)",
+
+                                                color:
+                                                    "#A78BFA",
+                                            }}
+                                        >
+
+                                            <DescriptionIcon />
+
+                                        </Box>
+
+
                                         <Typography
                                             sx={{
-                                                fontWeight: 600,
+                                                fontWeight:
+                                                    650,
 
-                                                color: "#475569",
+                                                color:
+                                                    "text.primary",
                                             }}
                                         >
                                             No email templates found
@@ -717,11 +688,13 @@ function EmailTemplates() {
 
                                         <Typography
                                             sx={{
+                                                fontSize:
+                                                    "0.8rem",
+
+                                                color:
+                                                    "text.secondary",
+
                                                 mt: 0.5,
-
-                                                fontSize: "0.8rem",
-
-                                                color: "#64748B",
                                             }}
                                         >
                                             Create your first email template.
@@ -733,82 +706,125 @@ function EmailTemplates() {
 
                             ) : (
 
-                                templates.map(
-                                    (template, index) => (
+                                templates.map((template) => (
 
-                                        <TableRow
-                                            key={
-                                                template.id
-                                            }
+                                    <TableRow
+                                        key={
+                                            template.id
+                                        }
 
-                                            sx={{
-                                                backgroundColor:
-                                                    index % 2 === 0
-                                                        ? "#EAF1F8"
-                                                        : "#E2EBF5",
+                                        sx={{
+                                            transition:
+                                                "background-color 0.18s ease",
 
-                                                transition:
-                                                    "all 0.2s ease",
+                                            "&:hover": {
 
-                                                "&:hover": {
+                                                "& td": {
                                                     backgroundColor:
-                                                        "#D8E5F5",
-
-                                                    "& td": {
-                                                        borderColor:
-                                                            "#B8C9DF",
-                                                    },
+                                                        "action.hover",
                                                 },
+                                            },
 
-                                                "&:last-child td": {
-                                                    borderBottom:
-                                                        "none",
-                                                },
+                                            "&:last-child td": {
+                                                borderBottom:
+                                                    "none",
+                                            },
+                                        }}
+                                    >
+
+                                        {/* ==================================================
+                                            ID
+                                        ================================================== */}
+
+                                        <TableCell
+                                            sx={{
+                                                fontWeight:
+                                                    700,
+
+                                                color:
+                                                    "#A78BFA",
+
+                                                fontSize:
+                                                    "0.82rem",
+
+                                                py: 1.35,
                                             }}
                                         >
+                                            {template.id}
+                                        </TableCell>
 
-                                            {/* ==================================================
-                                                ID
-                                            ================================================== */}
 
-                                            <TableCell
+                                        {/* ==================================================
+                                            TEMPLATE NAME
+                                        ================================================== */}
+
+                                        <TableCell>
+
+                                            <Box
                                                 sx={{
-                                                    fontWeight: 700,
+                                                    display:
+                                                        "flex",
 
-                                                    color:
-                                                        "#2563EB",
+                                                    alignItems:
+                                                        "center",
 
-                                                    fontSize:
-                                                        "0.85rem",
-
-                                                    borderBottom:
-                                                        "1px solid #CFDCEB",
+                                                    gap: 1.1,
                                                 }}
                                             >
-                                                {template.id}
-                                            </TableCell>
 
+                                                <Box
+                                                    sx={{
+                                                        width: 32,
+                                                        height: 32,
 
-                                            {/* ==================================================
-                                                TEMPLATE NAME
-                                            ================================================== */}
+                                                        borderRadius:
+                                                            "9px",
 
-                                            <TableCell
-                                                sx={{
-                                                    borderBottom:
-                                                        "1px solid #CFDCEB",
-                                                }}
-                                            >
+                                                        display:
+                                                            "flex",
+
+                                                        alignItems:
+                                                            "center",
+
+                                                        justifyContent:
+                                                            "center",
+
+                                                        background:
+                                                            "rgba(124, 58, 237, 0.10)",
+
+                                                        color:
+                                                            "#A78BFA",
+
+                                                        border:
+                                                            "1px solid",
+
+                                                        borderColor:
+                                                            "rgba(124, 58, 237, 0.18)",
+
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
+
+                                                    <DescriptionIcon
+                                                        sx={{
+                                                            fontSize:
+                                                                17,
+                                                        }}
+                                                    />
+
+                                                </Box>
+
 
                                                 <Typography
                                                     sx={{
-                                                        fontWeight: 650,
+                                                        fontWeight:
+                                                            650,
 
                                                         color:
-                                                            "#172554",
+                                                            "text.primary",
 
                                                         fontSize:
-                                                            "0.875rem",
+                                                            "0.84rem",
                                                     }}
                                                 >
                                                     {
@@ -816,117 +832,119 @@ function EmailTemplates() {
                                                     }
                                                 </Typography>
 
-                                            </TableCell>
+                                            </Box>
+
+                                        </TableCell>
 
 
-                                            {/* ==================================================
-                                                SUBJECT
-                                            ================================================== */}
+                                        {/* ==================================================
+                                            SUBJECT
+                                        ================================================== */}
 
-                                            <TableCell
+                                        <TableCell>
+
+                                            <Typography
                                                 sx={{
-                                                    borderBottom:
-                                                        "1px solid #CFDCEB",
+                                                    color:
+                                                        "primary.main",
+
+                                                    fontWeight:
+                                                        550,
+
+                                                    fontSize:
+                                                        "0.82rem",
+
+                                                    whiteSpace:
+                                                        "nowrap",
+
+                                                    overflow:
+                                                        "hidden",
+
+                                                    textOverflow:
+                                                        "ellipsis",
+
+                                                    maxWidth:
+                                                        280,
+                                                }}
+                                            >
+                                                {
+                                                    template.subject
+                                                }
+                                            </Typography>
+
+                                        </TableCell>
+
+
+                                        {/* ==================================================
+                                            BODY
+                                        ================================================== */}
+
+                                        <TableCell
+                                            sx={{
+                                                maxWidth:
+                                                    390,
+                                            }}
+                                        >
+
+                                            <Typography
+                                                sx={{
+                                                    color:
+                                                        "text.secondary",
+
+                                                    fontSize:
+                                                        "0.8rem",
+
+                                                    lineHeight:
+                                                        1.5,
+
+                                                    display:
+                                                        "-webkit-box",
+
+                                                    WebkitLineClamp:
+                                                        2,
+
+                                                    WebkitBoxOrient:
+                                                        "vertical",
+
+                                                    overflow:
+                                                        "hidden",
+                                                }}
+                                            >
+                                                {
+                                                    template.body
+                                                }
+                                            </Typography>
+
+                                        </TableCell>
+
+
+                                        {/* ==================================================
+                                            ACTIONS
+                                        ================================================== */}
+
+                                        <TableCell>
+
+                                            <Box
+                                                sx={{
+                                                    display:
+                                                        "flex",
+
+                                                    alignItems:
+                                                        "center",
+
+                                                    gap:
+                                                        0.6,
                                                 }}
                                             >
 
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: 500,
+                                                {/* EDIT */}
 
-                                                        color:
-                                                            "#1D4ED8",
-
-                                                        fontSize:
-                                                            "0.85rem",
-                                                    }}
-                                                >
-                                                    {
-                                                        template.subject
-                                                    }
-                                                </Typography>
-
-                                            </TableCell>
-
-
-                                            {/* ==================================================
-                                                BODY
-                                            ================================================== */}
-
-                                            <TableCell
-                                                sx={{
-                                                    borderBottom:
-                                                        "1px solid #CFDCEB",
-
-                                                    maxWidth: 400,
-                                                }}
-                                            >
-
-                                                <Typography
-                                                    sx={{
-                                                        color:
-                                                            "#475569",
-
-                                                        fontSize:
-                                                            "0.85rem",
-
-                                                        lineHeight:
-                                                            1.5,
-
-                                                        display:
-                                                            "-webkit-box",
-
-                                                        WebkitLineClamp:
-                                                            3,
-
-                                                        WebkitBoxOrient:
-                                                            "vertical",
-
-                                                        overflow:
-                                                            "hidden",
-                                                    }}
-                                                >
-                                                    {
-                                                        template.body
-                                                    }
-                                                </Typography>
-
-                                            </TableCell>
-
-
-                                            {/* ==================================================
-                                                ACTIONS
-                                            ================================================== */}
-
-                                            <TableCell
-                                                sx={{
-                                                    borderBottom:
-                                                        "1px solid #CFDCEB",
-                                                }}
-                                            >
-
-                                                <Box
-                                                    sx={{
-                                                        display:
-                                                            "flex",
-
-                                                        gap: 1,
-
-                                                        flexWrap:
-                                                            "wrap",
-                                                    }}
+                                                <Tooltip
+                                                    title="Edit template"
                                                 >
 
-                                                    {/* EDIT */}
-
-                                                    <Button
-                                                        variant="outlined"
-
+                                                    <IconButton
                                                         size="small"
-
-                                                        startIcon={
-                                                            <EditIcon />
-                                                        }
 
                                                         onClick={() =>
                                                             handleEdit(
@@ -935,53 +953,54 @@ function EmailTemplates() {
                                                         }
 
                                                         sx={{
-                                                            borderRadius:
-                                                                "8px",
-
-                                                            borderColor:
-                                                                "#93B4F4",
+                                                            width: 32,
+                                                            height: 32,
 
                                                             color:
-                                                                "#2563EB",
+                                                                "primary.main",
 
                                                             backgroundColor:
-                                                                "#E2ECFF",
+                                                                "rgba(37, 99, 235, 0.09)",
 
-                                                            fontWeight:
-                                                                600,
+                                                            border:
+                                                                "1px solid",
 
-                                                            textTransform:
-                                                                "none",
-
-                                                            transition:
-                                                                "all 0.2s ease",
+                                                            borderColor:
+                                                                "rgba(37, 99, 235, 0.18)",
 
                                                             "&:hover": {
-                                                                borderColor:
-                                                                    "#60A5FA",
-
                                                                 backgroundColor:
-                                                                    "#D5E4FF",
+                                                                    "rgba(37, 99, 235, 0.16)",
 
                                                                 transform:
                                                                     "translateY(-1px)",
                                                             },
+
+                                                            transition:
+                                                                "all 0.18s ease",
                                                         }}
                                                     >
-                                                        Edit
-                                                    </Button>
+
+                                                        <EditIcon
+                                                            sx={{
+                                                                fontSize:
+                                                                    17,
+                                                            }}
+                                                        />
+
+                                                    </IconButton>
+
+                                                </Tooltip>
 
 
-                                                    {/* DELETE */}
+                                                {/* DELETE */}
 
-                                                    <Button
-                                                        variant="outlined"
+                                                <Tooltip
+                                                    title="Delete template"
+                                                >
 
+                                                    <IconButton
                                                         size="small"
-
-                                                        startIcon={
-                                                            <DeleteIcon />
-                                                        }
 
                                                         onClick={() =>
                                                             handleDelete(
@@ -990,51 +1009,52 @@ function EmailTemplates() {
                                                         }
 
                                                         sx={{
-                                                            borderRadius:
-                                                                "8px",
-
-                                                            borderColor:
-                                                                "#FCA5A5",
+                                                            width: 32,
+                                                            height: 32,
 
                                                             color:
-                                                                "#DC2626",
+                                                                "error.main",
 
                                                             backgroundColor:
-                                                                "#FEECEC",
+                                                                "rgba(239, 68, 68, 0.08)",
 
-                                                            fontWeight:
-                                                                600,
+                                                            border:
+                                                                "1px solid",
 
-                                                            textTransform:
-                                                                "none",
-
-                                                            transition:
-                                                                "all 0.2s ease",
+                                                            borderColor:
+                                                                "rgba(239, 68, 68, 0.18)",
 
                                                             "&:hover": {
-                                                                borderColor:
-                                                                    "#F87171",
-
                                                                 backgroundColor:
-                                                                    "#FEE2E2",
+                                                                    "rgba(239, 68, 68, 0.15)",
 
                                                                 transform:
                                                                     "translateY(-1px)",
                                                             },
+
+                                                            transition:
+                                                                "all 0.18s ease",
                                                         }}
                                                     >
-                                                        Delete
-                                                    </Button>
 
-                                                </Box>
+                                                        <DeleteIcon
+                                                            sx={{
+                                                                fontSize:
+                                                                    17,
+                                                            }}
+                                                        />
 
-                                            </TableCell>
+                                                    </IconButton>
 
-                                        </TableRow>
+                                                </Tooltip>
 
-                                    )
+                                            </Box>
 
-                                )
+                                        </TableCell>
+
+                                    </TableRow>
+
+                                ))
 
                             )}
 
@@ -1052,23 +1072,10 @@ function EmailTemplates() {
             ================================================== */}
 
             <EmailTemplateDialog
-
-                open={
-                    open
-                }
-
-                handleClose={
-                    handleClose
-                }
-
-                onTemplateCreated={
-                    loadTemplates
-                }
-
-                editingTemplate={
-                    editingTemplate
-                }
-
+                open={open}
+                handleClose={handleClose}
+                onTemplateCreated={loadTemplates}
+                editingTemplate={editingTemplate}
             />
 
 
@@ -1077,25 +1084,10 @@ function EmailTemplates() {
             ================================================== */}
 
             <DeleteTemplateDialog
-
-                open={
-                    Boolean(
-                        deletingTemplate
-                    )
-                }
-
-                template={
-                    deletingTemplate
-                }
-
-                handleClose={
-                    handleDeleteClose
-                }
-
-                handleConfirm={
-                    handleDeleteConfirm
-                }
-
+                open={Boolean(deletingTemplate)}
+                template={deletingTemplate}
+                handleClose={handleDeleteClose}
+                handleConfirm={handleDeleteConfirm}
             />
 
         </Box>

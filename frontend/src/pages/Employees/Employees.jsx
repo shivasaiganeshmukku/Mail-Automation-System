@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 import AddIcon from "@mui/icons-material/Add";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -27,69 +29,63 @@ import DeleteEmployeeDialog from "../../components/DeleteEmployeeDialog";
 
 
 // ============================================================
-// DEPARTMENT COLORS
+// DEPARTMENT STYLE
 // ============================================================
 
 const getDepartmentStyle = (department) => {
 
     const styles = {
 
-        // BLUE
         IT: {
-            color: "#2563EB",
-            background: "#EFF6FF",
-            border: "#BFDBFE",
+            color: "#60A5FA",
+            background: "rgba(37, 99, 235, 0.12)",
+            border: "rgba(96, 165, 250, 0.35)",
         },
 
-        // PINK
         HR: {
-            color: "#DB2777",
-            background: "#FDF2F8",
-            border: "#FBCFE8",
+            color: "#F472B6",
+            background: "rgba(219, 39, 119, 0.12)",
+            border: "rgba(244, 114, 182, 0.35)",
         },
 
-        // GREEN
         Finance: {
-            color: "#059669",
-            background: "#ECFDF5",
-            border: "#A7F3D0",
+            color: "#34D399",
+            background: "rgba(5, 150, 105, 0.12)",
+            border: "rgba(52, 211, 153, 0.35)",
         },
 
-        // AMBER
         Sales: {
-            color: "#D97706",
-            background: "#FFFBEB",
-            border: "#FDE68A",
+            color: "#FBBF24",
+            background: "rgba(217, 119, 6, 0.12)",
+            border: "rgba(251, 191, 36, 0.35)",
         },
 
-        // VIOLET
         Marketing: {
-            color: "#7C3AED",
-            background: "#F5F3FF",
-            border: "#DDD6FE",
+            color: "#A78BFA",
+            background: "rgba(124, 58, 237, 0.12)",
+            border: "rgba(167, 139, 250, 0.35)",
         },
 
-        // TEAL
         Operations: {
-            color: "#0F766E",
-            background: "#F0FDFA",
-            border: "#99F6E4",
+            color: "#2DD4BF",
+            background: "rgba(15, 118, 110, 0.12)",
+            border: "rgba(45, 212, 191, 0.35)",
         },
 
     };
 
     return (
         styles[department] || {
-            color: "#475569",
-            background: "#F8FAFC",
-            border: "#CBD5E1",
+            color: "text.secondary",
+            background: "action.hover",
+            border: "divider",
         }
     );
 };
 
 
 // ============================================================
-// EMPLOYEE STATUS COLORS
+// STATUS STYLE
 // ============================================================
 
 const getStatusStyle = (status) => {
@@ -97,17 +93,17 @@ const getStatusStyle = (status) => {
     if (status) {
 
         return {
-            color: "#047857",
-            background: "#ECFDF5",
-            border: "#A7F3D0",
+            color: "#34D399",
+            background: "rgba(16, 185, 129, 0.12)",
+            border: "rgba(52, 211, 153, 0.35)",
         };
 
     }
 
     return {
-        color: "#B91C1C",
-        background: "#FEF2F2",
-        border: "#FECACA",
+        color: "#F87171",
+        background: "rgba(239, 68, 68, 0.12)",
+        border: "rgba(248, 113, 113, 0.35)",
     };
 };
 
@@ -170,7 +166,7 @@ function Employees() {
 
 
     // ============================================================
-    // OPEN ADD EMPLOYEE DIALOG
+    // OPEN ADD EMPLOYEE
     // ============================================================
 
     const handleOpen = () => {
@@ -202,6 +198,8 @@ function Employees() {
     const handleClose = () => {
 
         setOpen(false);
+
+        setEditingEmployee(null);
 
     };
 
@@ -240,7 +238,6 @@ function Employees() {
 
         }
 
-
         EmployeeService.deleteEmployee(
             deletingEmployee.id
         )
@@ -268,7 +265,6 @@ function Employees() {
                     "DELETE EMPLOYEE ERROR:",
                     error
                 );
-
 
                 if (error.response) {
 
@@ -301,15 +297,11 @@ function Employees() {
 
         const file = event.target.files[0];
 
-
         if (!file) {
 
             return;
 
         }
-
-
-        // Check Excel extension
 
         if (
             !file.name
@@ -327,9 +319,7 @@ function Employees() {
 
         }
 
-
         setUploading(true);
-
 
         EmployeeService.uploadEmployees(file)
 
@@ -340,9 +330,7 @@ function Employees() {
                     response.data
                 );
 
-
                 const data = response.data;
-
 
                 alert(
                     "Excel upload completed!\n\n" +
@@ -357,7 +345,6 @@ function Employees() {
                     (data.failed ?? 0)
                 );
 
-
                 loadEmployees();
 
             })
@@ -369,19 +356,14 @@ function Employees() {
                     error
                 );
 
-
                 if (error.response) {
 
                     const errorData =
                         error.response.data;
 
-
                     let message =
                         errorData.message ||
                         "Excel upload failed.";
-
-
-                    // Missing columns
 
                     if (
                         errorData.missing_columns &&
@@ -396,9 +378,6 @@ function Employees() {
 
                     }
 
-
-                    // Validation errors
-
                     if (
                         errorData.errors &&
                         errorData.errors.length > 0
@@ -406,7 +385,6 @@ function Employees() {
 
                         message +=
                             "\n\nValidation Errors:\n";
-
 
                         errorData.errors
                             .slice(0, 10)
@@ -419,7 +397,6 @@ function Employees() {
 
                             });
 
-
                         if (
                             errorData.errors.length > 10
                         ) {
@@ -430,7 +407,6 @@ function Employees() {
                         }
 
                     }
-
 
                     alert(message);
 
@@ -476,9 +452,7 @@ function Employees() {
             <Box
                 sx={{
                     display: "flex",
-
-                    justifyContent:
-                        "space-between",
+                    justifyContent: "space-between",
 
                     alignItems: {
                         xs: "flex-start",
@@ -505,31 +479,21 @@ function Employees() {
                     <Box
                         sx={{
                             display: "flex",
-
-                            alignItems:
-                                "center",
-
+                            alignItems: "center",
                             gap: 1.5,
                         }}
                     >
-
-                        {/* TITLE ICON */}
 
                         <Box
                             sx={{
                                 width: 44,
                                 height: 44,
 
-                                borderRadius:
-                                    "12px",
+                                borderRadius: "13px",
 
                                 display: "flex",
-
-                                alignItems:
-                                    "center",
-
-                                justifyContent:
-                                    "center",
+                                alignItems: "center",
+                                justifyContent: "center",
 
                                 background:
                                     "linear-gradient(135deg, #2563EB, #4F46E5)",
@@ -537,7 +501,9 @@ function Employees() {
                                 color: "#FFFFFF",
 
                                 boxShadow:
-                                    "0 6px 16px rgba(37, 99, 235, 0.20)",
+                                    "0 8px 22px rgba(37, 99, 235, 0.24)",
+
+                                flexShrink: 0,
                             }}
                         >
 
@@ -545,8 +511,6 @@ function Employees() {
 
                         </Box>
 
-
-                        {/* TITLE TEXT */}
 
                         <Box>
 
@@ -559,8 +523,7 @@ function Employees() {
 
                                     fontWeight: 750,
 
-                                    color:
-                                        "#1E293B",
+                                    color: "text.primary",
 
                                     lineHeight: 1.2,
                                 }}
@@ -573,11 +536,9 @@ function Employees() {
                                 sx={{
                                     mt: 0.5,
 
-                                    fontSize:
-                                        "0.85rem",
+                                    fontSize: "0.85rem",
 
-                                    color:
-                                        "#64748B",
+                                    color: "text.secondary",
                                 }}
                             >
                                 Manage employees and organization records
@@ -597,9 +558,7 @@ function Employees() {
                 <Box
                     sx={{
                         display: "flex",
-
-                        gap: 1.5,
-
+                        gap: 1.2,
                         flexWrap: "wrap",
 
                         width: {
@@ -609,54 +568,48 @@ function Employees() {
                     }}
                 >
 
-                    {/* ==================================================
-                        UPLOAD EXCEL
-                    ================================================== */}
+                    {/* UPLOAD EXCEL */}
 
                     <Button
                         variant="outlined"
-
                         component="label"
-
-                        startIcon={
-                            <UploadFileIcon />
-                        }
-
+                        startIcon={<UploadFileIcon />}
                         disabled={uploading}
 
                         sx={{
-                            minHeight: 44,
+                            minHeight: 42,
 
-                            px: 2,
+                            px: 1.8,
 
-                            borderRadius:
-                                "11px",
+                            borderRadius: "10px",
 
                             borderColor:
-                                "#FED7AA",
+                                "rgba(245, 158, 11, 0.45)",
 
                             color:
-                                "#EA580C",
+                                "#F59E0B",
 
                             backgroundColor:
-                                "#FFF7ED",
+                                "rgba(245, 158, 11, 0.08)",
 
-                            fontWeight: 600,
+                            fontWeight: 650,
 
-                            transition:
-                                "all 0.2s ease",
+                            textTransform: "none",
 
                             "&:hover": {
 
                                 borderColor:
-                                    "#FB923C",
+                                    "#F59E0B",
 
                                 backgroundColor:
-                                    "#FFEDD5",
+                                    "rgba(245, 158, 11, 0.14)",
 
                                 transform:
-                                    "translateY(-2px)",
+                                    "translateY(-1px)",
                             },
+
+                            transition:
+                                "all 0.2s ease",
                         }}
                     >
 
@@ -665,55 +618,39 @@ function Employees() {
                             : "Upload Excel"
                         }
 
-
                         <input
                             type="file"
-
                             hidden
-
                             accept=".xlsx"
-
-                            onChange={
-                                handleExcelUpload
-                            }
+                            onChange={handleExcelUpload}
                         />
 
                     </Button>
 
 
-                    {/* ==================================================
-                        ADD EMPLOYEE
-                    ================================================== */}
+                    {/* ADD EMPLOYEE */}
 
                     <Button
                         variant="contained"
-
-                        startIcon={
-                            <AddIcon />
-                        }
-
-                        onClick={
-                            handleOpen
-                        }
+                        startIcon={<AddIcon />}
+                        onClick={handleOpen}
 
                         sx={{
-                            minHeight: 44,
+                            minHeight: 42,
 
-                            px: 2.2,
+                            px: 2,
 
-                            borderRadius:
-                                "11px",
+                            borderRadius: "10px",
 
                             background:
                                 "linear-gradient(135deg, #2563EB, #4F46E5)",
 
-                            fontWeight: 600,
+                            fontWeight: 650,
+
+                            textTransform: "none",
 
                             boxShadow:
-                                "0 6px 15px rgba(37, 99, 235, 0.20)",
-
-                            transition:
-                                "all 0.2s ease",
+                                "0 7px 18px rgba(37, 99, 235, 0.22)",
 
                             "&:hover": {
 
@@ -721,16 +658,17 @@ function Employees() {
                                     "linear-gradient(135deg, #1D4ED8, #4338CA)",
 
                                 transform:
-                                    "translateY(-2px)",
+                                    "translateY(-1px)",
 
                                 boxShadow:
-                                    "0 9px 20px rgba(37, 99, 235, 0.28)",
+                                    "0 10px 22px rgba(37, 99, 235, 0.30)",
                             },
+
+                            transition:
+                                "all 0.2s ease",
                         }}
                     >
-
                         Add Employee
-
                     </Button>
 
                 </Box>
@@ -746,20 +684,27 @@ function Employees() {
                 elevation={0}
 
                 sx={{
-                    borderRadius:
-                        "18px",
+                    borderRadius: "16px",
 
                     border:
-                        "1px solid #DCE3EF",
+                        "1px solid",
+
+                    borderColor:
+                        "divider",
 
                     background:
-                        "linear-gradient(135deg, #F8FAFC 0%, #EEF4FF 100%)",
+                        "rgba(255, 255, 255, 0.035)",
 
-                    overflow:
-                        "hidden",
+                    backdropFilter:
+                        "blur(16px)",
+
+                    WebkitBackdropFilter:
+                        "blur(16px)",
+
+                    overflow: "hidden",
 
                     boxShadow:
-                        "0 8px 25px rgba(15, 23, 42, 0.06)",
+                        "0 10px 30px rgba(15, 23, 42, 0.08)",
                 }}
             >
 
@@ -770,26 +715,26 @@ function Employees() {
                 <Box
                     sx={{
                         px: {
-                            xs: 2,
-                            sm: 2.5,
+                            xs: 1.8,
+                            sm: 2.2,
                         },
 
-                        py: 2,
+                        py: 1.45,
 
-                        display:
-                            "flex",
+                        display: "flex",
 
-                        justifyContent:
-                            "space-between",
+                        justifyContent: "space-between",
 
-                        alignItems:
-                            "center",
+                        alignItems: "center",
 
                         borderBottom:
-                            "1px solid #D7E0EC",
+                            "1px solid",
+
+                        borderColor:
+                            "divider",
 
                         background:
-                            "linear-gradient(135deg, #EAF2FF 0%, #F1F5F9 100%)",
+                            "rgba(37, 99, 235, 0.055)",
                     }}
                 >
 
@@ -797,14 +742,12 @@ function Employees() {
 
                         <Typography
                             sx={{
-                                fontSize:
-                                    "1rem",
+                                fontSize: "0.95rem",
 
-                                fontWeight:
-                                    700,
+                                fontWeight: 700,
 
                                 color:
-                                    "#1E293B",
+                                    "text.primary",
                             }}
                         >
                             Employees
@@ -813,22 +756,18 @@ function Employees() {
 
                         <Typography
                             sx={{
-                                fontSize:
-                                    "0.75rem",
+                                fontSize: "0.72rem",
 
                                 color:
-                                    "#64748B",
+                                    "text.secondary",
 
-                                mt: 0.3,
+                                mt: 0.25,
                             }}
                         >
-
                             {employees.length} employee
-
                             {employees.length !== 1
                                 ? "s"
                                 : ""}
-
                         </Typography>
 
                     </Box>
@@ -837,32 +776,34 @@ function Employees() {
                     {/* RECORD COUNT */}
 
                     <Chip
-                        icon={
-                            <PeopleIcon />
-                        }
+                        icon={<PeopleIcon />}
 
-                        label={
-                            `${employees.length} Records`
-                        }
+                        label={`${employees.length} Records`}
 
                         size="small"
 
                         sx={{
+                            height: 30,
+
                             color:
-                                "#2563EB",
+                                "primary.main",
 
                             backgroundColor:
-                                "#E0ECFF",
+                                "rgba(37, 99, 235, 0.10)",
 
                             border:
-                                "1px solid #C7D8F5",
+                                "1px solid",
 
-                            fontWeight:
-                                600,
+                            borderColor:
+                                "rgba(37, 99, 235, 0.22)",
+
+                            fontWeight: 650,
 
                             "& .MuiChip-icon": {
                                 color:
-                                    "#2563EB",
+                                    "primary.main",
+
+                                fontSize: 17,
                             },
                         }}
                     />
@@ -871,48 +812,20 @@ function Employees() {
 
 
                 {/* ==================================================
-                    SCROLLABLE TABLE
+                    TABLE
                 ================================================== */}
 
                 <TableContainer
                     sx={{
                         maxHeight: 560,
 
-                        overflow:
-                            "auto",
+                        overflow: "auto",
 
-                        // Chrome / Edge / Safari
+                        scrollbarWidth: "none",
 
                         "&::-webkit-scrollbar": {
-                            width: 8,
-                            height: 8,
+                            display: "none",
                         },
-
-                        "&::-webkit-scrollbar-track": {
-                            background:
-                                "#E8EDF4",
-                        },
-
-                        "&::-webkit-scrollbar-thumb": {
-                            background:
-                                "#B8C4D4",
-
-                            borderRadius:
-                                10,
-                        },
-
-                        "&::-webkit-scrollbar-thumb:hover": {
-                            background:
-                                "#94A3B8",
-                        },
-
-                        // Firefox
-
-                        scrollbarWidth:
-                            "thin",
-
-                        scrollbarColor:
-                            "#B8C4D4 #E8EDF4",
                     }}
                 >
 
@@ -920,15 +833,11 @@ function Employees() {
                         stickyHeader
 
                         sx={{
-                            minWidth:
-                                950,
+                            minWidth: 950,
 
-                            backgroundColor:
-                                "#F3F6FA",
-
-                            "& .MuiTableBody-root": {
-                                backgroundColor:
-                                    "#F3F6FA",
+                            "& .MuiTableCell-root": {
+                                borderColor:
+                                    "divider",
                             },
                         }}
                     >
@@ -941,209 +850,56 @@ function Employees() {
 
                             <TableRow>
 
-                                {/* EMPLOYEE ID */}
+                                {[
+                                    ["Employee ID", 130],
+                                    ["Name", 190],
+                                    ["Email", 280],
+                                    ["Department", 160],
+                                    ["Status", 130],
+                                    ["Actions", 170],
+                                ].map(([label, minWidth]) => (
 
-                                <TableCell
-                                    sx={{
-                                        minWidth:
-                                            130,
+                                    <TableCell
+                                        key={label}
 
-                                        position:
-                                            "sticky",
+                                        sx={{
+                                            minWidth,
 
-                                        top: 0,
+                                            position: "sticky",
 
-                                        zIndex: 5,
+                                            top: 0,
 
-                                        background:
-                                            "#E8EEF7",
+                                            zIndex: 5,
 
-                                        color:
-                                            "#334155",
+                                            background:
+                                                "background.paper",
 
-                                        fontWeight:
-                                            700,
+                                            color:
+                                                "text.secondary",
 
-                                        fontSize:
-                                            "0.75rem",
+                                            fontWeight: 750,
 
-                                        textTransform:
-                                            "uppercase",
+                                            fontSize: "0.7rem",
 
-                                        letterSpacing:
-                                            "0.04em",
+                                            textTransform:
+                                                "uppercase",
 
-                                        borderBottom:
-                                            "1px solid #D5DEEA",
-                                    }}
-                                >
-                                    Employee ID
-                                </TableCell>
+                                            letterSpacing:
+                                                "0.05em",
 
+                                            borderBottom:
+                                                "1px solid",
 
-                                {/* NAME */}
+                                            borderColor:
+                                                "divider",
 
-                                <TableCell
-                                    sx={{
-                                        minWidth:
-                                            190,
+                                            py: 1.4,
+                                        }}
+                                    >
+                                        {label}
+                                    </TableCell>
 
-                                        background:
-                                            "#E8EEF7",
-
-                                        color:
-                                            "#334155",
-
-                                        fontWeight:
-                                            700,
-
-                                        fontSize:
-                                            "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #D5DEEA",
-                                    }}
-                                >
-                                    Name
-                                </TableCell>
-
-
-                                {/* EMAIL */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth:
-                                            280,
-
-                                        background:
-                                            "#E8EEF7",
-
-                                        color:
-                                            "#334155",
-
-                                        fontWeight:
-                                            700,
-
-                                        fontSize:
-                                            "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #D5DEEA",
-                                    }}
-                                >
-                                    Email
-                                </TableCell>
-
-
-                                {/* DEPARTMENT */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth:
-                                            160,
-
-                                        background:
-                                            "#E8EEF7",
-
-                                        color:
-                                            "#334155",
-
-                                        fontWeight:
-                                            700,
-
-                                        fontSize:
-                                            "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #D5DEEA",
-                                    }}
-                                >
-                                    Department
-                                </TableCell>
-
-
-                                {/* STATUS */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth:
-                                            130,
-
-                                        background:
-                                            "#E8EEF7",
-
-                                        color:
-                                            "#334155",
-
-                                        fontWeight:
-                                            700,
-
-                                        fontSize:
-                                            "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #D5DEEA",
-                                    }}
-                                >
-                                    Status
-                                </TableCell>
-
-
-                                {/* ACTIONS */}
-
-                                <TableCell
-                                    sx={{
-                                        minWidth:
-                                            180,
-
-                                        background:
-                                            "#E8EEF7",
-
-                                        color:
-                                            "#334155",
-
-                                        fontWeight:
-                                            700,
-
-                                        fontSize:
-                                            "0.75rem",
-
-                                        textTransform:
-                                            "uppercase",
-
-                                        letterSpacing:
-                                            "0.04em",
-
-                                        borderBottom:
-                                            "1px solid #D5DEEA",
-                                    }}
-                                >
-                                    Actions
-                                </TableCell>
+                                ))}
 
                             </TableRow>
 
@@ -1171,32 +927,42 @@ function Employees() {
 
                                             borderBottom:
                                                 "none",
-
-                                            backgroundColor:
-                                                "#F3F6FA",
                                         }}
                                     >
 
-                                        <PeopleIcon
+                                        <Box
                                             sx={{
-                                                fontSize:
-                                                    45,
+                                                width: 52,
+                                                height: 52,
+
+                                                mx: "auto",
+                                                mb: 1.5,
+
+                                                borderRadius: "14px",
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                background:
+                                                    "rgba(37, 99, 235, 0.10)",
 
                                                 color:
-                                                    "#94A3B8",
-
-                                                mb: 1,
+                                                    "primary.main",
                                             }}
-                                        />
+                                        >
+
+                                            <PeopleIcon />
+
+                                        </Box>
 
 
                                         <Typography
                                             sx={{
-                                                fontWeight:
-                                                    600,
+                                                fontWeight: 650,
 
                                                 color:
-                                                    "#475569",
+                                                    "text.primary",
                                             }}
                                         >
                                             No employees found
@@ -1205,17 +971,15 @@ function Employees() {
 
                                         <Typography
                                             sx={{
-                                                fontSize:
-                                                    "0.8rem",
+                                                fontSize: "0.8rem",
 
                                                 color:
-                                                    "#94A3B8",
+                                                    "text.secondary",
 
                                                 mt: 0.5,
                                             }}
                                         >
-                                            Add an employee or
-                                            upload an Excel file.
+                                            Add an employee or upload an Excel file.
                                         </Typography>
 
                                     </TableCell>
@@ -1224,290 +988,253 @@ function Employees() {
 
                             ) : (
 
-                                employees.map(
-                                    (employee) => {
+                                employees.map((employee) => {
 
-                                        const departmentStyle =
-                                            getDepartmentStyle(
-                                                employee.department
-                                            );
+                                    const departmentStyle =
+                                        getDepartmentStyle(
+                                            employee.department
+                                        );
 
-                                        const statusStyle =
-                                            getStatusStyle(
-                                                employee.status
-                                            );
+                                    const statusStyle =
+                                        getStatusStyle(
+                                            employee.status
+                                        );
 
-                                        return (
+                                    return (
 
-                                            <TableRow
-                                                key={
-                                                    employee.id
-                                                }
+                                        <TableRow
+                                            key={employee.id}
 
-                                                sx={{
-                                                    transition:
-                                                        "all 0.2s ease",
+                                            sx={{
+                                                transition:
+                                                    "background-color 0.18s ease",
+
+                                                "&:hover": {
 
                                                     "& td": {
                                                         backgroundColor:
-                                                            "#F3F6FA",
-
-                                                        borderColor:
-                                                            "#DCE3EA",
+                                                            "action.hover",
                                                     },
+                                                },
 
-                                                    "&:hover": {
+                                                "&:last-child td": {
+                                                    borderBottom:
+                                                        "none",
+                                                },
+                                            }}
+                                        >
 
-                                                        "& td": {
-                                                            backgroundColor:
-                                                                "#E8F0FC",
+                                            {/* EMPLOYEE ID */}
 
-                                                            borderColor:
-                                                                "#D8E2EF",
-                                                        },
-                                                    },
+                                            <TableCell
+                                                sx={{
+                                                    fontWeight: 700,
 
-                                                    "&:last-child td": {
-                                                        borderBottom:
-                                                            "none",
-                                                    },
+                                                    color:
+                                                        "primary.main",
+
+                                                    fontSize:
+                                                        "0.82rem",
+
+                                                    py: 1.35,
                                                 }}
                                             >
+                                                {employee.employee_id}
+                                            </TableCell>
 
-                                                {/* ==================================================
-                                                    EMPLOYEE ID
-                                                ================================================== */}
 
-                                                <TableCell
+                                            {/* NAME */}
+
+                                            <TableCell>
+
+                                                <Box
                                                     sx={{
-                                                        fontWeight:
-                                                            700,
+                                                        display: "flex",
 
-                                                        color:
-                                                            "#2563EB",
+                                                        alignItems:
+                                                            "center",
 
-                                                        fontSize:
-                                                            "0.85rem",
+                                                        gap: 1.2,
                                                     }}
                                                 >
-                                                    {
-                                                        employee.employee_id
-                                                    }
-                                                </TableCell>
 
-
-                                                {/* ==================================================
-                                                    NAME
-                                                ================================================== */}
-
-                                                <TableCell>
-
-                                                    <Box
+                                                    <Avatar
                                                         sx={{
-                                                            display:
-                                                                "flex",
+                                                            width: 32,
+                                                            height: 32,
 
-                                                            alignItems:
-                                                                "center",
+                                                            fontSize:
+                                                                "0.75rem",
 
-                                                            gap: 1.5,
+                                                            fontWeight: 700,
+
+                                                            color:
+                                                                "primary.main",
+
+                                                            backgroundColor:
+                                                                "rgba(37, 99, 235, 0.12)",
+
+                                                            border:
+                                                                "1px solid",
+
+                                                            borderColor:
+                                                                "rgba(37, 99, 235, 0.20)",
                                                         }}
                                                     >
+                                                        {employee.name
+                                                            ?.charAt(0)
+                                                            ?.toUpperCase()}
+                                                    </Avatar>
 
-                                                        <Avatar
-                                                            sx={{
-                                                                width:
-                                                                    34,
-
-                                                                height:
-                                                                    34,
-
-                                                                fontSize:
-                                                                    "0.8rem",
-
-                                                                fontWeight:
-                                                                    700,
-
-                                                                color:
-                                                                    "#2563EB",
-
-                                                                backgroundColor:
-                                                                    "#DBEAFE",
-                                                            }}
-                                                        >
-
-                                                            {
-                                                                employee.name
-                                                                    ?.charAt(
-                                                                        0
-                                                                    )
-                                                                    ?.toUpperCase()
-                                                            }
-
-                                                        </Avatar>
-
-
-                                                        <Typography
-                                                            sx={{
-                                                                fontWeight:
-                                                                    600,
-
-                                                                color:
-                                                                    "#1E293B",
-
-                                                                fontSize:
-                                                                    "0.875rem",
-                                                            }}
-                                                        >
-                                                            {
-                                                                employee.name
-                                                            }
-                                                        </Typography>
-
-                                                    </Box>
-
-                                                </TableCell>
-
-
-                                                {/* ==================================================
-                                                    EMAIL
-                                                ================================================== */}
-
-                                                <TableCell>
 
                                                     <Typography
                                                         sx={{
+                                                            fontWeight: 600,
+
                                                             color:
-                                                                "#64748B",
+                                                                "text.primary",
 
                                                             fontSize:
-                                                                "0.85rem",
-
-                                                            whiteSpace:
-                                                                "nowrap",
+                                                                "0.84rem",
                                                         }}
                                                     >
-                                                        {
-                                                            employee.email
-                                                        }
+                                                        {employee.name}
                                                     </Typography>
 
-                                                </TableCell>
+                                                </Box>
+
+                                            </TableCell>
 
 
-                                                {/* ==================================================
-                                                    DEPARTMENT
-                                                ================================================== */}
+                                            {/* EMAIL */}
 
-                                                <TableCell>
+                                            <TableCell>
 
-                                                    <Chip
-                                                        label={
-                                                            employee.department
-                                                        }
+                                                <Typography
+                                                    sx={{
+                                                        color:
+                                                            "text.secondary",
 
-                                                        size="small"
+                                                        fontSize:
+                                                            "0.81rem",
 
-                                                        sx={{
-                                                            color:
-                                                                departmentStyle.color,
+                                                        whiteSpace:
+                                                            "nowrap",
+                                                    }}
+                                                >
+                                                    {employee.email}
+                                                </Typography>
 
-                                                            backgroundColor:
-                                                                departmentStyle.background,
-
-                                                            border:
-                                                                `1px solid ${departmentStyle.border}`,
-
-                                                            fontWeight:
-                                                                600,
-
-                                                            fontSize:
-                                                                "0.72rem",
-                                                        }}
-                                                    />
-
-                                                </TableCell>
+                                            </TableCell>
 
 
-                                                {/* ==================================================
-                                                    STATUS
-                                                ================================================== */}
+                                            {/* DEPARTMENT */}
 
-                                                <TableCell>
+                                            <TableCell>
 
-                                                    <Chip
-                                                        icon={
-                                                            employee.status
-                                                                ? (
-                                                                    <CheckCircleIcon />
-                                                                )
-                                                                : (
-                                                                    <CancelIcon />
-                                                                )
-                                                        }
+                                                <Chip
+                                                    label={
+                                                        employee.department ||
+                                                        "—"
+                                                    }
 
-                                                        label={
-                                                            employee.status
-                                                                ? "Active"
-                                                                : "Inactive"
-                                                        }
+                                                    size="small"
 
-                                                        size="small"
+                                                    sx={{
+                                                        height: 27,
 
-                                                        sx={{
+                                                        color:
+                                                            departmentStyle.color,
+
+                                                        backgroundColor:
+                                                            departmentStyle.background,
+
+                                                        border:
+                                                            `1px solid ${departmentStyle.border}`,
+
+                                                        fontWeight: 650,
+
+                                                        fontSize:
+                                                            "0.69rem",
+                                                    }}
+                                                />
+
+                                            </TableCell>
+
+
+                                            {/* STATUS */}
+
+                                            <TableCell>
+
+                                                <Chip
+                                                    icon={
+                                                        employee.status
+                                                            ? (
+                                                                <CheckCircleIcon />
+                                                            )
+                                                            : (
+                                                                <CancelIcon />
+                                                            )
+                                                    }
+
+                                                    label={
+                                                        employee.status
+                                                            ? "Active"
+                                                            : "Inactive"
+                                                    }
+
+                                                    size="small"
+
+                                                    sx={{
+                                                        height: 27,
+
+                                                        color:
+                                                            statusStyle.color,
+
+                                                        backgroundColor:
+                                                            statusStyle.background,
+
+                                                        border:
+                                                            `1px solid ${statusStyle.border}`,
+
+                                                        fontWeight: 650,
+
+                                                        fontSize:
+                                                            "0.69rem",
+
+                                                        "& .MuiChip-icon": {
                                                             color:
                                                                 statusStyle.color,
 
-                                                            backgroundColor:
-                                                                statusStyle.background,
-
-                                                            border:
-                                                                `1px solid ${statusStyle.border}`,
-
-                                                            fontWeight:
-                                                                600,
-
                                                             fontSize:
-                                                                "0.72rem",
+                                                                15,
+                                                        },
+                                                    }}
+                                                />
 
-                                                            "& .MuiChip-icon": {
-                                                                color:
-                                                                    statusStyle.color,
-
-                                                                fontSize:
-                                                                    "16px",
-                                                            },
-                                                        }}
-                                                    />
-
-                                                </TableCell>
+                                            </TableCell>
 
 
-                                                {/* ==================================================
-                                                    ACTIONS
-                                                ================================================== */}
+                                            {/* ACTIONS */}
 
-                                                <TableCell>
+                                            <TableCell>
 
-                                                    <Box
-                                                        sx={{
-                                                            display:
-                                                                "flex",
+                                                <Box
+                                                    sx={{
+                                                        display:
+                                                            "flex",
 
-                                                            gap: 1,
-                                                        }}
-                                                    >
+                                                        alignItems:
+                                                            "center",
 
-                                                        {/* EDIT */}
+                                                        gap: 0.5,
+                                                    }}
+                                                >
 
-                                                        <Button
-                                                            variant="outlined"
+                                                    <Tooltip title="Edit employee">
 
+                                                        <IconButton
                                                             size="small"
-
-                                                            startIcon={
-                                                                <EditIcon />
-                                                            }
 
                                                             onClick={() =>
                                                                 handleEdit(
@@ -1516,51 +1243,48 @@ function Employees() {
                                                             }
 
                                                             sx={{
-                                                                borderRadius:
-                                                                    "8px",
-
-                                                                borderColor:
-                                                                    "#BFDBFE",
+                                                                width: 32,
+                                                                height: 32,
 
                                                                 color:
-                                                                    "#2563EB",
+                                                                    "primary.main",
 
                                                                 backgroundColor:
-                                                                    "#EFF6FF",
+                                                                    "rgba(37, 99, 235, 0.09)",
 
-                                                                fontWeight:
-                                                                    600,
+                                                                border:
+                                                                    "1px solid",
 
-                                                                textTransform:
-                                                                    "none",
+                                                                borderColor:
+                                                                    "rgba(37, 99, 235, 0.18)",
 
                                                                 "&:hover": {
-
-                                                                    borderColor:
-                                                                        "#93C5FD",
-
                                                                     backgroundColor:
-                                                                        "#DBEAFE",
+                                                                        "rgba(37, 99, 235, 0.16)",
 
                                                                     transform:
                                                                         "translateY(-1px)",
                                                                 },
+
+                                                                transition:
+                                                                    "all 0.18s ease",
                                                             }}
                                                         >
-                                                            Edit
-                                                        </Button>
+                                                            <EditIcon
+                                                                sx={{
+                                                                    fontSize:
+                                                                        17,
+                                                                }}
+                                                            />
+                                                        </IconButton>
+
+                                                    </Tooltip>
 
 
-                                                        {/* DELETE */}
+                                                    <Tooltip title="Delete employee">
 
-                                                        <Button
-                                                            variant="outlined"
-
+                                                        <IconButton
                                                             size="small"
-
-                                                            startIcon={
-                                                                <DeleteIcon />
-                                                            }
 
                                                             onClick={() =>
                                                                 handleDelete(
@@ -1569,50 +1293,52 @@ function Employees() {
                                                             }
 
                                                             sx={{
-                                                                borderRadius:
-                                                                    "8px",
-
-                                                                borderColor:
-                                                                    "#FECACA",
+                                                                width: 32,
+                                                                height: 32,
 
                                                                 color:
-                                                                    "#DC2626",
+                                                                    "error.main",
 
                                                                 backgroundColor:
-                                                                    "#FEF2F2",
+                                                                    "rgba(239, 68, 68, 0.08)",
 
-                                                                fontWeight:
-                                                                    600,
+                                                                border:
+                                                                    "1px solid",
 
-                                                                textTransform:
-                                                                    "none",
+                                                                borderColor:
+                                                                    "rgba(239, 68, 68, 0.18)",
 
                                                                 "&:hover": {
-
-                                                                    borderColor:
-                                                                        "#FCA5A5",
-
                                                                     backgroundColor:
-                                                                        "#FEE2E2",
+                                                                        "rgba(239, 68, 68, 0.15)",
 
                                                                     transform:
                                                                         "translateY(-1px)",
                                                                 },
+
+                                                                transition:
+                                                                    "all 0.18s ease",
                                                             }}
                                                         >
-                                                            Delete
-                                                        </Button>
+                                                            <DeleteIcon
+                                                                sx={{
+                                                                    fontSize:
+                                                                        17,
+                                                                }}
+                                                            />
+                                                        </IconButton>
 
-                                                    </Box>
+                                                    </Tooltip>
 
-                                                </TableCell>
+                                                </Box>
 
-                                            </TableRow>
+                                            </TableCell>
 
-                                        );
+                                        </TableRow>
 
-                                    }
-                                )
+                                    );
+
+                                })
 
                             )}
 
@@ -1630,23 +1356,10 @@ function Employees() {
             ================================================== */}
 
             <EmployeeDialog
-
-                open={
-                    open
-                }
-
-                handleClose={
-                    handleClose
-                }
-
-                onEmployeeCreated={
-                    loadEmployees
-                }
-
-                editingEmployee={
-                    editingEmployee
-                }
-
+                open={open}
+                handleClose={handleClose}
+                onEmployeeCreated={loadEmployees}
+                editingEmployee={editingEmployee}
             />
 
 
@@ -1655,25 +1368,10 @@ function Employees() {
             ================================================== */}
 
             <DeleteEmployeeDialog
-
-                open={
-                    Boolean(
-                        deletingEmployee
-                    )
-                }
-
-                employee={
-                    deletingEmployee
-                }
-
-                handleClose={
-                    handleDeleteClose
-                }
-
-                handleConfirm={
-                    handleDeleteConfirm
-                }
-
+                open={Boolean(deletingEmployee)}
+                employee={deletingEmployee}
+                handleClose={handleDeleteClose}
+                handleConfirm={handleDeleteConfirm}
             />
 
         </Box>

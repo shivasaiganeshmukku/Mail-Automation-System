@@ -1,259 +1,264 @@
+import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-
-import { NavLink } from "react-router-dom";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import EmailIcon from "@mui/icons-material/Email";
 import SendIcon from "@mui/icons-material/Send";
 import HistoryIcon from "@mui/icons-material/History";
-import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
 
+import { Link, useLocation } from "react-router-dom";
 
-// ============================================================
-// DRAWER WIDTH
-// ============================================================
 
 const drawerWidth = 270;
 
 
-// ============================================================
-// MENU ITEMS
-// ============================================================
+function Sidebar({
+    mobileOpen,
+    onClose
+}) {
 
-const menuItems = [
-
-    {
-        label: "Dashboard",
-        path: "/",
-        icon: <DashboardIcon />,
-        color: "#2563EB",
-        background: "#EFF6FF",
-    },
-
-    {
-        label: "Employees",
-        path: "/employees",
-        icon: <PeopleIcon />,
-        color: "#7C3AED",
-        background: "#F5F3FF",
-    },
-
-    {
-        label: "Email Templates",
-        path: "/email-templates",
-        icon: <EmailIcon />,
-        color: "#0891B2",
-        background: "#ECFEFF",
-    },
-
-    {
-        label: "Send Email",
-        path: "/send-email",
-        icon: <SendIcon />,
-        color: "#059669",
-        background: "#ECFDF5",
-    },
-
-    {
-        label: "Email Logs",
-        path: "/email-logs",
-        icon: <HistoryIcon />,
-        color: "#EA580C",
-        background: "#FFF7ED",
-    },
-
-    {
-        label: "Settings",
-        path: "/settings",
-        icon: <SettingsIcon />,
-        color: "#DB2777",
-        background: "#FDF2F8",
-    },
-
-];
+    const location = useLocation();
 
 
-// ============================================================
-// SIDEBAR
-// ============================================================
+    /*
+    =========================================================
+    NAVIGATION ITEMS
+    =========================================================
+    */
 
-function Sidebar({ mobileOpen, onClose, isMobile }) {
+    const menuItems = [
+        {
+            label: "Dashboard",
+            path: "/",
+            icon: <DashboardIcon />
+        },
+        {
+            label: "Employees",
+            path: "/employees",
+            icon: <PeopleIcon />
+        },
+        {
+            label: "Email Templates",
+            path: "/email-templates",
+            icon: <EmailIcon />
+        },
+        {
+            label: "Send Email",
+            path: "/send-email",
+            icon: <SendIcon />
+        },
+        {
+            label: "Email Logs",
+            path: "/email-logs",
+            icon: <HistoryIcon />
+        }
+    ];
 
 
-    // ========================================================
-    // DRAWER CONTENT
-    // ========================================================
+    /*
+    =========================================================
+    SIDEBAR CONTENT
+    =========================================================
+    */
 
     const drawerContent = (
 
         <Box
             sx={{
                 height: "100%",
+
                 display: "flex",
+
                 flexDirection: "column",
 
-                // Glass background
-                background:
-                    "rgba(151, 179, 234, 0.88)",
+                position: "relative",
 
-                backdropFilter: "blur(18px)",
-                WebkitBackdropFilter: "blur(18px)",
+                overflow: "hidden",
 
-                color: "#395178",
+                /*
+                =============================================
+                GLASS BACKGROUND
+                =============================================
+                */
+
+                backgroundColor:
+                    "background.paper",
+
+                backdropFilter:
+                    "blur(18px)",
+
+                WebkitBackdropFilter:
+                    "blur(18px)",
+
+                color:
+                    "text.primary",
+
+                transition:
+                    "background-color 0.35s ease, color 0.35s ease",
+
+                /*
+                =============================================
+                SUBTLE ACCENT GLOW
+                =============================================
+                */
+
+                "&::before": {
+
+                    content: '""',
+
+                    position: "absolute",
+
+                    top: 0,
+
+                    left: 0,
+
+                    width: "100%",
+
+                    height: 180,
+
+                    background:
+                        "radial-gradient(circle at 20% 10%, rgba(37, 99, 235, 0.12), transparent 65%)",
+
+                    pointerEvents: "none"
+                }
             }}
         >
 
-
             {/* =================================================
-                HEADER
+                SIDEBAR HEADER
             ================================================= */}
 
             <Box
                 sx={{
-                    minHeight: 72,
-
-                    px: 2.5,
+                    minHeight: 64,
 
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
 
-                    borderBottom:
-                        "1px solid rgba(226, 232, 240, 0.8)",
+                    alignItems: "center",
+
+                    justifyContent:
+                        "space-between",
+
+                    px: 2.25,
+
+                    position: "relative",
+
+                    zIndex: 1
                 }}
             >
 
-                {/* BRAND */}
-
                 <Box
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.5,
+                        minWidth: 0
                     }}
                 >
 
-                    {/* LOGO */}
-
-                    <Box
+                    <Typography
+                        noWrap
                         sx={{
-                            width: 42,
-                            height: 42,
+                            fontWeight: 700,
 
-                            borderRadius: "12px",
+                            fontSize:
+                                "1.02rem",
 
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            color:
+                                "text.primary",
 
-                            background:
-                                "linear-gradient(135deg, #2563EB, #7C3AED)",
-
-                            color: "#ffffff",
-
-                            fontSize: "19px",
-                            fontWeight: 800,
-
-                            boxShadow:
-                                "0 6px 16px rgba(37, 99, 235, 0.25)",
+                            letterSpacing:
+                                "-0.2px"
                         }}
                     >
-                        M
-                    </Box>
+                        Mail Automation
+                    </Typography>
 
 
-                    {/* TITLE */}
+                    <Typography
+                        variant="caption"
+                        noWrap
+                        sx={{
+                            color:
+                                "text.secondary",
 
-                    <Box>
-
-                        <Typography
-                            sx={{
-                                fontSize: "15px",
-                                fontWeight: 700,
-                                color: "#172033",
-                                lineHeight: 1.2,
-                            }}
-                        >
-                            Mail Automation
-                        </Typography>
-
-                        <Typography
-                            sx={{
-                                fontSize: "11px",
-                                color: "#8992A3",
-                                mt: 0.3,
-                            }}
-                        >
-                            Admin Panel
-                        </Typography>
-
-                    </Box>
+                            fontSize:
+                                "0.76rem"
+                        }}
+                    >
+                        Management System
+                    </Typography>
 
                 </Box>
 
 
-                {/* MOBILE CLOSE */}
+                {/* =================================================
+                    MOBILE CLOSE BUTTON
+                ================================================= */}
 
-                {isMobile && (
+                <IconButton
+                    onClick={onClose}
+                    aria-label="Close navigation menu"
+                    sx={{
+                        display: {
+                            xs: "flex",
+                            md: "none"
+                        },
 
-                    <IconButton
-                        onClick={onClose}
-                        sx={{
-                            color: "#64748B",
+                        width: 38,
 
-                            "&:hover": {
-                                backgroundColor:
-                                    "rgba(100, 116, 139, 0.10)",
-                            },
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
+                        height: 38,
 
-                )}
+                        color:
+                            "text.secondary",
+
+                        backgroundColor:
+                            "rgba(37, 99, 235, 0.06)",
+
+                        border:
+                            "1px solid rgba(37, 99, 235, 0.10)",
+
+                        transition:
+                            "all 0.2s ease",
+
+                        "&:hover": {
+
+                            color:
+                                "primary.main",
+
+                            backgroundColor:
+                                "rgba(37, 99, 235, 0.12)",
+
+                            transform:
+                                "scale(1.04)"
+                        }
+                    }}
+                >
+
+                    <CloseIcon />
+
+                </IconButton>
 
             </Box>
 
 
             {/* =================================================
-                MENU TITLE
+                HEADER DIVIDER
             ================================================= */}
 
-            <Box
+            <Divider
                 sx={{
-                    px: 2.5,
-                    pt: 3,
-                    pb: 1.5,
+                    borderColor:
+                        "divider"
                 }}
-            >
-
-                <Typography
-                    sx={{
-                        fontSize: "10px",
-                        fontWeight: 800,
-
-                        color: "#94A3B8",
-
-                        textTransform: "uppercase",
-
-                        letterSpacing: "0.12em",
-                    }}
-                >
-                    Main Menu
-                </Typography>
-
-            </Box>
+            />
 
 
             {/* =================================================
@@ -263,291 +268,375 @@ function Sidebar({ mobileOpen, onClose, isMobile }) {
             <List
                 sx={{
                     px: 1.5,
-                    py: 0,
+
+                    py: 2,
+
+                    position: "relative",
+
+                    zIndex: 1
                 }}
             >
 
-                {menuItems.map((item) => (
+                {menuItems.map((item) => {
 
-                    <ListItem
-                        key={item.path}
-                        disablePadding
-                        sx={{
-                            mb: 0.8,
-                        }}
-                    >
+                    const isActive =
+                        location.pathname ===
+                        item.path;
 
-                        <ListItemButton
-                            component={NavLink}
-                            to={item.path}
 
-                            onClick={
-                                isMobile
-                                    ? onClose
-                                    : undefined
-                            }
+                    return (
 
-                            end={item.path === "/"}
-
+                        <ListItem
+                            key={item.path}
+                            disablePadding
                             sx={{
-                                minHeight: 50,
+                                mb: 0.65
+                            }}
+                        >
 
-                                px: 1.5,
+                            <ListItemButton
+                                component={Link}
+                                to={item.path}
 
-                                borderRadius: "12px",
+                                onClick={() => {
 
-                                position: "relative",
+                                    if (onClose) {
+                                        onClose();
+                                    }
 
-                                color: "#64748B",
+                                }}
 
-                                transition:
-                                    "all 0.25s ease",
+                                sx={{
+                                    minHeight: 44,
 
-                                "& .MuiListItemIcon-root": {
-                                    minWidth: 42,
+                                    borderRadius: 2.2,
 
-                                    color: item.color,
+                                    px: 1.35,
 
-                                    transition:
-                                        "all 0.25s ease",
-                                },
+                                    position: "relative",
 
-                                "& .MuiListItemText-primary": {
-                                    fontSize: "14px",
-                                    fontWeight: 550,
+                                    overflow: "hidden",
 
-                                    transition:
-                                        "all 0.25s ease",
-                                },
+                                    color:
+                                        isActive
+                                            ? "primary.main"
+                                            : "text.secondary",
 
-
-                                // =================================
-                                // HOVER
-                                // =================================
-
-                                "&:hover": {
                                     backgroundColor:
-                                        item.background,
+                                        isActive
+                                            ? "rgba(37, 99, 235, 0.12)"
+                                            : "transparent",
 
-                                    color: item.color,
+                                    border:
+                                        isActive
+                                            ? "1px solid rgba(37, 99, 235, 0.16)"
+                                            : "1px solid transparent",
 
-                                    transform:
-                                        "translateX(4px)",
+                                    transition:
+                                        "all 0.2s ease",
 
-                                    boxShadow:
-                                        `0 5px 14px ${item.color}12`,
-
-                                    "& .MuiListItemIcon-root": {
-                                        color: item.color,
-
-                                        transform:
-                                            "scale(1.08)",
-                                    },
-
-                                    "& .MuiListItemText-primary": {
-                                        color: item.color,
-                                        fontWeight: 650,
-                                    },
-                                },
-
-
-                                // =================================
-                                // ACTIVE
-                                // =================================
-
-                                "&.active": {
-                                    background:
-                                        `linear-gradient(
-                                            135deg,
-                                            ${item.background},
-                                            rgba(244, 238, 238, 0.95)
-                                        )`,
-
-                                    color: item.color,
-
-                                    boxShadow:
-                                        `0 6px 18px ${item.color}18`,
-
-                                    "& .MuiListItemIcon-root": {
-                                        color: item.color,
-                                    },
-
-                                    "& .MuiListItemText-primary": {
-                                        color: item.color,
-                                        fontWeight: 700,
-                                    },
+                                    /*
+                                    =================================
+                                    ACTIVE LEFT INDICATOR
+                                    =================================
+                                    */
 
                                     "&::before": {
+
                                         content: '""',
 
                                         position: "absolute",
 
                                         left: 0,
 
-                                        top: "9px",
+                                        top: "22%",
 
-                                        bottom: "9px",
+                                        width: isActive
+                                            ? 3
+                                            : 0,
 
-                                        width: "4px",
+                                        height: "56%",
 
                                         borderRadius:
-                                            "0 6px 6px 0",
+                                            "0 4px 4px 0",
 
                                         backgroundColor:
-                                            item.color,
+                                            "primary.main",
+
+                                        transition:
+                                            "width 0.2s ease"
                                     },
-                                },
 
-                            }}
-                        >
 
-                            <ListItemIcon>
-                                {item.icon}
-                            </ListItemIcon>
+                                    /*
+                                    =================================
+                                    HOVER
+                                    =================================
+                                    */
 
-                            <ListItemText
-                                primary={item.label}
-                            />
+                                    "&:hover": {
 
-                        </ListItemButton>
+                                        color:
+                                            "primary.main",
 
-                    </ListItem>
+                                        backgroundColor:
+                                            isActive
+                                                ? "rgba(37, 99, 235, 0.16)"
+                                                : "rgba(37, 99, 235, 0.07)",
 
-                ))}
+                                        border:
+                                            isActive
+                                                ? "1px solid rgba(37, 99, 235, 0.20)"
+                                                : "1px solid rgba(37, 99, 235, 0.08)",
+
+                                        transform:
+                                            "translateX(2px)"
+                                    }
+                                }}
+                            >
+
+                                {/* =================================
+                                    ICON
+                                ================================= */}
+
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 38,
+
+                                        color:
+                                            "inherit",
+
+                                        display: "flex",
+
+                                        alignItems: "center",
+
+                                        transition:
+                                            "color 0.2s ease"
+                                    }}
+                                >
+                                    {item.icon}
+                                </ListItemIcon>
+
+
+                                {/* =================================
+                                    TEXT
+                                ================================= */}
+
+                                <ListItemText
+                                    primary={
+                                        item.label
+                                    }
+
+                                    primaryTypographyProps={{
+                                        fontSize:
+                                            "0.90rem",
+
+                                        fontWeight:
+                                            isActive
+                                                ? 600
+                                                : 500
+                                    }}
+                                />
+
+                            </ListItemButton>
+
+                        </ListItem>
+
+                    );
+
+                })}
 
             </List>
 
 
             {/* =================================================
-                SPACER
+                FLEXIBLE SPACE
             ================================================= */}
 
             <Box
                 sx={{
-                    flexGrow: 1,
+                    flexGrow: 1
                 }}
             />
 
 
             {/* =================================================
-                BOTTOM SECTION
+                SIDEBAR FOOTER
             ================================================= */}
 
-            <Box>
+            <Box
+                sx={{
+                    px: 2,
 
-                <Divider
-                    sx={{
-                        borderColor:
-                            "rgba(229, 237, 246, 0.8)",
-                    }}
-                />
+                    py: 1.75,
 
-                <Box
+                    position: "relative",
+
+                    zIndex: 1,
+
+                    borderTop:
+                        "1px solid",
+
+                    borderColor:
+                        "divider"
+                }}
+            >
+
+                <Typography
+                    variant="caption"
                     sx={{
-                        px: 2.5,
-                        py: 2.5,
+                        color:
+                            "text.secondary",
+
+                        fontSize:
+                            "0.72rem"
                     }}
                 >
-
-                    <Typography
-                        sx={{
-                            fontSize: "11px",
-                            color: "#94A3B8",
-                            textAlign: "center",
-                            fontWeight: 600,
-                        }}
-                    >
-                        Mail Automation System
-                    </Typography>
-
-                    <Typography
-                        sx={{
-                            fontSize: "10px",
-                            color: "#CBD5E1",
-                            textAlign: "center",
-                            mt: 0.5,
-                        }}
-                    >
-                        v1.0.0
-                    </Typography>
-
-                </Box>
+                    Mail Automation System
+                </Typography>
 
             </Box>
 
         </Box>
-
     );
 
-
-    // ============================================================
-    // DRAWER
-    // ============================================================
 
     return (
 
-        <Drawer
-            variant="temporary"
+        <>
+            {/* =================================================
+                DESKTOP SIDEBAR
+            ================================================= */}
 
-            open={mobileOpen}
+            <Drawer
+                variant="permanent"
 
-            onClose={onClose}
+                sx={{
+                    display: {
+                        xs: "none",
+                        md: "block"
+                    },
 
-            ModalProps={{
-                keepMounted: true,
-            }}
+                    width:
+                        drawerWidth,
 
-            sx={{
+                    flexShrink: 0,
 
-                // ================================================
-                // BACKDROP
-                // ================================================
+                    "& .MuiDrawer-paper": {
 
-                "& .MuiBackdrop-root": {
-                    backgroundColor:
-                        "rgba(15, 23, 42, 0.38)",
+                        width:
+                            drawerWidth,
 
-                    backdropFilter:
-                        "blur(3px)",
-                },
+                        boxSizing:
+                            "border-box",
+
+                        top: 64,
+
+                        height:
+                            "calc(100vh - 64px)",
+
+                        backgroundColor:
+                            "background.paper",
+
+                        backdropFilter:
+                            "blur(18px)",
+
+                        WebkitBackdropFilter:
+                            "blur(18px)",
+
+                        borderRight:
+                            "1px solid",
+
+                        borderColor:
+                            "divider",
+
+                        boxShadow:
+                            "none",
+
+                        overflowX:
+                            "hidden"
+                    }
+                }}
+            >
+
+                {drawerContent}
+
+            </Drawer>
 
 
-                // ================================================
-                // DRAWER PAPER
-                // ================================================
+            {/* =================================================
+                MOBILE SIDEBAR
+            ================================================= */}
 
-                "& .MuiDrawer-paper": {
+            <Drawer
+                variant="temporary"
 
-                    width: drawerWidth,
+                anchor="left"
 
-                    boxSizing: "border-box",
+                open={
+                    mobileOpen
+                }
 
-                    border: "none",
+                onClose={
+                    onClose
+                }
 
-                    background:
-                        "rgba(175, 197, 238, 0.88)",
+                ModalProps={{
+                    keepMounted: true
+                }}
 
-                    backdropFilter:
-                        "blur(18px)",
+                transitionDuration={{
+                    enter: 260,
 
-                    WebkitBackdropFilter:
-                        "blur(18px)",
+                    exit: 200
+                }}
 
-                    boxShadow:
-                        "8px 0 35px rgba(15, 23, 42, 0.12)",
+                sx={{
+                    display: {
+                        xs: "block",
+                        md: "none"
+                    },
 
-                    overflowX: "hidden",
-                },
+                    "& .MuiDrawer-paper": {
 
-            }}
-        >
+                        width: {
+                            xs: "82%",
+                            sm: drawerWidth
+                        },
 
-            {drawerContent}
+                        maxWidth:
+                            drawerWidth,
 
-        </Drawer>
+                        boxSizing:
+                            "border-box",
 
+                        backgroundColor:
+                            "background.paper",
+
+                        backdropFilter:
+                            "blur(18px)",
+
+                        WebkitBackdropFilter:
+                            "blur(18px)",
+
+                        borderRight:
+                            "1px solid",
+
+                        borderColor:
+                            "divider",
+
+                        boxShadow:
+                            "8px 0 35px rgba(0, 0, 0, 0.18)"
+                    }
+                }}
+            >
+
+                {drawerContent}
+
+            </Drawer>
+
+        </>
     );
-
 }
 
 

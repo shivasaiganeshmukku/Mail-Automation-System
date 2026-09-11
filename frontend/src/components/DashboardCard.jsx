@@ -9,42 +9,101 @@ import SendIcon from "@mui/icons-material/Send";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 
-function DashboardCard({ title, value }) {
+function DashboardCard({
+    title,
+    value
+}) {
+
+    /*
+    =========================================================
+    CARD CONFIGURATION
+    =========================================================
+    */
 
     const cardConfig = {
 
         "Total Employees": {
-            color: "#2563EB",
-            lightColor: "#EFF6FF",
+
+            color: "#2374f7",
+
+            lightBackground:
+                "rgba(50, 127, 249, 0.09)",
+
+            darkBackground:
+                "rgba(59, 130, 246, 0.14)",
+
             icon: <PeopleIcon />
+
         },
+
 
         "Total Templates": {
-            color: "#7C3AED",
-            lightColor: "#F5F3FF",
+
+            color: "#8553f9",
+
+            lightBackground:
+                "rgba(139, 92, 246, 0.09)",
+
+            darkBackground:
+                "rgba(139, 92, 246, 0.14)",
+
             icon: <DescriptionIcon />
+
         },
+
 
         "Emails Sent": {
-            color: "#059669",
-            lightColor: "#ECFDF5",
+
+            color: "#09bf82",
+
+            lightBackground:
+                "rgba(16, 185, 129, 0.09)",
+
+            darkBackground:
+                "rgba(16, 185, 129, 0.14)",
+
             icon: <SendIcon />
+
         },
 
+
         "Failed Emails": {
-            color: "#DC2626",
-            lightColor: "#FEF2F2",
+
+            color: "#EF4444",
+
+            lightBackground:
+                "rgba(239, 68, 68, 0.08)",
+
+            darkBackground:
+                "rgba(239, 68, 68, 0.13)",
+
             icon: <WarningAmberIcon />
+
         }
 
     };
 
 
-    const config = cardConfig[title] || {
-        color: "#2563EB",
-        lightColor: "#EFF6FF",
-        icon: <DescriptionIcon />
-    };
+    /*
+    =========================================================
+    FALLBACK
+    =========================================================
+    */
+
+    const config =
+        cardConfig[title] || {
+
+            color: "#3B82F6",
+
+            lightBackground:
+                "rgba(59, 130, 246, 0.09)",
+
+            darkBackground:
+                "rgba(59, 130, 246, 0.14)",
+
+            icon: <DescriptionIcon />
+
+        };
 
 
     return (
@@ -52,95 +111,216 @@ function DashboardCard({ title, value }) {
         <Card
             elevation={0}
             sx={{
+                /*
+                =================================================
+                COMPACT CARD SIZE
+                =================================================
+                */
+
                 height: "100%",
-                minHeight: 150,
 
-                borderRadius: 3,
+                minHeight: 125,
 
-                border: `1px solid ${config.color}20`,
-
-                background: `
-                    linear-gradient(
-                        135deg,
-                        ${config.lightColor} 0%,
-                        #feecec 100%
-                    )
-                `,
+                borderRadius: 2.5,
 
                 position: "relative",
+
                 overflow: "hidden",
 
-                transition: "all 0.25s ease",
+
+                /*
+                =================================================
+                GLASS BACKGROUND
+                =================================================
+                */
+
+                backgroundColor:
+                    (theme) =>
+                        theme.palette.mode === "dark"
+                            ? config.darkBackground
+                            : config.lightBackground,
+
+                backdropFilter:
+                    "blur(16px)",
+
+                WebkitBackdropFilter:
+                    "blur(16px)",
+
+
+                /*
+                =================================================
+                BORDER
+                =================================================
+                */
+
+                border:
+                    `1px solid ${config.color}22`,
+
+
+                /*
+                =================================================
+                SHADOW
+                =================================================
+                */
+
+                boxShadow:
+                    (theme) =>
+                        theme.palette.mode === "dark"
+                            ? "0 8px 25px rgba(0, 0, 0, 0.22)"
+                            : "0 8px 25px rgba(15, 23, 42, 0.06)",
+
+
+                /*
+                =================================================
+                TRANSITION
+                =================================================
+                */
+
+                transition:
+                    "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease",
+
+
+                /*
+                =================================================
+                HOVER
+                =================================================
+                */
 
                 "&:hover": {
-                    transform: "translateY(-5px)",
-                    boxShadow: `0 12px 30px ${config.color}25`,
-                    borderColor: `${config.color}50`
+
+                    transform:
+                        "translateY(-3px)",
+
+                    boxShadow:
+                        `0 12px 28px ${config.color}20`,
+
+                    borderColor:
+                        `${config.color}45`
                 },
 
+
+                /*
+                =================================================
+                DECORATIVE GLOW
+                =================================================
+                */
+
                 "&::after": {
+
                     content: '""',
+
                     position: "absolute",
 
-                    width: 90,
-                    height: 90,
+                    width: 75,
+
+                    height: 75,
 
                     borderRadius: "50%",
 
-                    backgroundColor: `${config.color}10`,
+                    backgroundColor:
+                        `${config.color}0D`,
 
                     right: -25,
-                    bottom: -30
+
+                    bottom: -25,
+
+                    pointerEvents: "none"
                 }
+
             }}
         >
 
             <CardContent
                 sx={{
-                    p: 3,
+                    /*
+                    =================================================
+                    COMPACT PADDING
+                    =================================================
+                    */
+
+                    p: 2,
+
+                    "&:last-child": {
+                        pb: 2
+                    },
+
                     position: "relative",
+
                     zIndex: 1
                 }}
             >
 
-                {/* HEADER */}
+                {/* =================================================
+                    HEADER
+                ================================================= */}
 
                 <Box
                     sx={{
                         display: "flex",
+
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        mb: 2
+
+                        justifyContent:
+                            "space-between",
+
+                        mb: 1.4
                     }}
                 >
 
                     <Typography
                         sx={{
-                            fontSize: "0.9rem",
+                            fontSize:
+                                "0.80rem",
+
                             fontWeight: 600,
-                            color: "#64748B",
-                            letterSpacing: "0.3px"
+
+                            color:
+                                "text.secondary",
+
+                            letterSpacing:
+                                "0.2px",
+
+                            lineHeight: 1.2
                         }}
                     >
                         {title}
                     </Typography>
 
 
-                    {/* ICON */}
+                    {/* =================================================
+                        ICON
+                    ================================================= */}
 
                     <Box
                         sx={{
-                            width: 42,
-                            height: 42,
+                            width: 34,
 
-                            borderRadius: 2,
+                            height: 34,
+
+                            flexShrink: 0,
+
+                            borderRadius: 1.8,
 
                             display: "flex",
+
                             alignItems: "center",
+
                             justifyContent: "center",
 
-                            backgroundColor: `${config.color}15`,
-                            color: config.color
+                            backgroundColor:
+                                `${config.color}16`,
+
+                            color:
+                                config.color,
+
+                            border:
+                                `1px solid ${config.color}18`,
+
+                            "& svg": {
+
+                                fontSize: 19
+
+                            }
                         }}
                     >
                         {config.icon}
@@ -149,29 +329,49 @@ function DashboardCard({ title, value }) {
                 </Box>
 
 
-                {/* VALUE */}
+                {/* =================================================
+                    VALUE
+                ================================================= */}
 
                 <Typography
                     sx={{
-                        fontSize: "2.3rem",
+                        fontSize: {
+                            xs: "1.75rem",
+                            sm: "1.9rem"
+                        },
+
                         fontWeight: 700,
+
                         lineHeight: 1,
 
-                        color: "#1E293B"
+                        color:
+                            "text.primary",
+
+                        letterSpacing:
+                            "-0.6px"
                     }}
                 >
                     {value}
                 </Typography>
 
 
-                {/* SMALL STATUS */}
+                {/* =================================================
+                    STATUS
+                ================================================= */}
 
                 <Typography
                     sx={{
-                        mt: 1.5,
-                        fontSize: "0.75rem",
+                        mt: 1,
+
+                        fontSize:
+                            "0.68rem",
+
                         fontWeight: 500,
-                        color: config.color
+
+                        color:
+                            config.color,
+
+                        lineHeight: 1.2
                     }}
                 >
                     {title === "Failed Emails"

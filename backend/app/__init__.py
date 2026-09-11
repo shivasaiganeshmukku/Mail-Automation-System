@@ -1,5 +1,7 @@
+import os
 from flask import Flask
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from app.config import Config
 from app.database import db
@@ -21,6 +23,9 @@ from app.routes.dashboard_routes import dashboard_bp
 from app.scheduler.birthday_scheduler import start_scheduler
 
 
+migrate = Migrate()
+
+
 def create_app():
 
     # ============================================================
@@ -28,7 +33,7 @@ def create_app():
     # ============================================================
 
     app = Flask(__name__)
-
+    
     CORS(app)
 
     # ============================================================
@@ -52,6 +57,7 @@ def create_app():
     # ============================================================
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     # ============================================================
     # REGISTER EMPLOYEE ROUTES
@@ -111,13 +117,7 @@ def create_app():
     # CREATE DATABASE TABLES
     # ============================================================
 
-    with app.app_context():
-
-        print("Creating database tables...")
-
-        db.create_all()
-
-        print("Database tables created.")
+    
 
     # ============================================================
     # HOME ROUTE
@@ -132,7 +132,9 @@ def create_app():
     # START DAILY BIRTHDAY SCHEDULER
     # ============================================================
 
-    start_scheduler(app)
+    if os.getenv("SKIP_SCHEDULER", "False") != "True":
+        start_scheduler(app)
+    
 
     # ============================================================
     # RETURN APP
