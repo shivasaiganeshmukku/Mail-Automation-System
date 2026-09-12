@@ -469,14 +469,6 @@ function BirthdayStatus() {
                 await loadBirthdayStatus();
 
 
-                /*
-                 * Keep the department card open.
-                 *
-                 * After reloading the birthday data,
-                 * find the updated employee and keep
-                 * the department panel selected.
-                 */
-
                 setData((currentData) => {
 
                     return currentData;
@@ -622,9 +614,7 @@ function BirthdayStatus() {
 
                 p: {
                     xs: 2,
-
                     sm: 2.5,
-
                     md: 3
                 },
 
@@ -818,8 +808,14 @@ function BirthdayStatus() {
                         width:
                             "100%",
 
-                        minHeight:
-                            132
+                        height:
+                            128,
+
+                        maxHeight:
+                            128,
+
+                        overflow:
+                            "visible"
                     }}
                 >
 
@@ -1090,11 +1086,17 @@ function NoBirthdays() {
 
         <Box
             sx={{
-                height:
-                    82,
-
                 width:
                     "100%",
+
+                height:
+                    128,
+
+                maxHeight:
+                    128,
+
+                boxSizing:
+                    "border-box",
 
                 borderRadius:
                     2.5,
@@ -1110,7 +1112,6 @@ function NoBirthdays() {
 
                 gap: {
                     xs: 1,
-
                     sm: 2
                 },
 
@@ -1139,6 +1140,9 @@ function NoBirthdays() {
                     fontSize:
                         "1.5rem",
 
+                    flexShrink:
+                        0,
+
                     animation:
                         "emptyCake 2.2s ease-in-out infinite",
 
@@ -1165,7 +1169,10 @@ function NoBirthdays() {
             <Box
                 sx={{
                     textAlign:
-                        "center"
+                        "center",
+
+                    minWidth:
+                        0
                 }}
             >
 
@@ -1178,7 +1185,10 @@ function NoBirthdays() {
                             700,
 
                         color:
-                            "text.primary"
+                            "text.primary",
+
+                        whiteSpace:
+                            "nowrap"
                     }}
                 >
                     No Birthdays Today
@@ -1207,7 +1217,6 @@ function NoBirthdays() {
                 sx={{
                     display: {
                         xs: "none",
-
                         sm: "flex"
                     },
 
@@ -1227,7 +1236,10 @@ function NoBirthdays() {
                         2,
 
                     backgroundColor:
-                        "rgba(16, 185, 129, 0.08)"
+                        "rgba(16, 185, 129, 0.08)",
+
+                    flexShrink:
+                        0
                 }}
             >
 
@@ -1264,6 +1276,9 @@ function NoBirthdays() {
                 sx={{
                     fontSize:
                         "0.75rem",
+
+                    flexShrink:
+                        0,
 
                     animation:
                         "emptySparkle 2s ease-in-out infinite",
@@ -1470,7 +1485,6 @@ function BirthdayCelebration() {
 
                     flexDirection: {
                         xs: "column",
-
                         sm: "row"
                     },
 
@@ -1482,7 +1496,6 @@ function BirthdayCelebration() {
 
                     gap: {
                         xs: 0.4,
-
                         sm: 1
                     }
                 }}
@@ -1607,7 +1620,6 @@ function BirthdayCelebration() {
                     sx={{
                         display: {
                             xs: "none",
-
                             sm: "block"
                         },
 
@@ -2279,11 +2291,6 @@ function DepartmentDetailCard({
                 borderColor:
                     `${config.color}55`,
 
-                /*
-                 * Opaque background so the birthday
-                 * card underneath is not visible.
-                 */
-
                 backgroundColor:
                     (theme) =>
                         theme.palette.mode === "dark"
@@ -2614,18 +2621,12 @@ function DepartmentDetailCard({
                     }}
                 >
 
-                    {/* STATUS */}
-
                     <DepartmentStatusChip
                         status={
                             department.status
                         }
                     />
 
-
-                    {/* =================================================
-                        SEND WISHES
-                    ================================================= */}
 
                     {employee.wishes_sent ? (
 
